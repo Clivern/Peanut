@@ -13,8 +13,8 @@ const (
 	RedisDockerImage = "redis:5.0.10-alpine"
 )
 
-// Virtualization interface
-type Virtualization interface {
+// Containerization interface
+type Containerization interface {
 	Deploy(service model.ServiceRecord) error
 	Destroy(service model.ServiceRecord) error
 }

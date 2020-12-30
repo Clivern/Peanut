@@ -28,10 +28,12 @@
 </p>
 <br/>
 
+Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like SQL, NoSQL, message brokers, graphing, time series databases ... etc. It perfectly suited for developmenet, manual and automated testing pipelines. Under the hood, it works with the containerization runtime like docker, LXC to deploy and configure the service. You can achieve the same with a bunch of yaml files but peanut is pretty easy and fun to use & should spead up your workflow.
+
 
 ## Documentation
 
-## Linux Deployment
+### Linux Deployment
 
 Download [the latest peanut binary](https://github.com/Clivern/Peanut/releases). Make it executable from everywhere.
 
@@ -134,11 +136,11 @@ $ peanut api -c /path/to/config.yml
 
 Deploy your first redis server!
 
-```
+```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"template":"REDIS_SERVICE"}' | jq .
 ```
 
-Please not that: for an easy (not recommended for a production environment) setup on linux, you can use [this bash script](/deployment/linux/ubuntu_20_04.sh).
+**Please not that:** for an easy (not recommended for a production environment) setup on linux, you can use [this bash script](/deployment/linux/ubuntu_20_04.sh).
 
 
 #### To run the Admin Dashboard (Development Only):

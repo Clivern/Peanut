@@ -33,7 +33,7 @@ type Message struct {
 type Workers struct {
 	job            *model.Job
 	broadcast      chan Message
-	virtualization runtime.Virtualization
+	containerization runtime.Containerization
 }
 
 // NewWorkers get a new workers instance
@@ -51,10 +51,10 @@ func NewWorkers() *Workers {
 	result.job = model.NewJobStore(db)
 	result.broadcast = make(chan Message, viper.GetInt("app.workers.buffer"))
 
-	if viper.GetString("app.virtualization") == "docker_compose" {
-		result.virtualization = runtime.NewDockerCompose()
+	if viper.GetString("app.containerization") == "docker_compose" {
+		result.containerization = runtime.NewDockerCompose()
 	} else {
-		panic("Invalid virtualization runtime!")
+		panic("Invalid containerization runtime!")
 	}
 
 	return result
@@ -152,7 +152,7 @@ func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup
 		}).Info(`Worker received a new message`)
 
 		// Deploy the service
-		w.virtualization.Deploy(model.ServiceRecord{
+		w.containerization.Deploy(model.ServiceRecord{
 			ID:          message.ServiceID,
 			Template:    message.Template,
 			Configs:     message.Configs,
