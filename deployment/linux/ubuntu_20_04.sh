@@ -71,7 +71,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/etcd.service
 function peanut {
     echo "Installing peanut ..."
 
-    apt-get install jq
+    apt-get install jq -y
 
     mkdir -p /etc/peanut
 
