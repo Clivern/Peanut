@@ -12,6 +12,13 @@ app:
         pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
 
+    # App Storage
+    storage:
+        # Type (only local supported)
+        type: ${PEANUT_STORAGE_TYPE:-local}
+        # Local Path
+        path: ${PEANUT_STORAGE_PATH:-/tmp}
+
     # API Configs
     api:
         key: ${PEANUT_API_KEY:-6c68b836-6f8e-465e-b59f-89c1db53afca}

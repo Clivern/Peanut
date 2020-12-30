@@ -71,6 +71,8 @@ WantedBy=multi-user.target" > /etc/systemd/system/etcd.service
 function peanut {
     echo "Installing peanut ..."
 
+    apt-get install jq
+
     mkdir -p /etc/peanut
 
     cd /etc/peanut
@@ -83,15 +85,11 @@ function peanut {
     echo "[Unit]
 Description=Peanut
 Documentation=https://github.com/clivern/peanut
-After=network.target
 
 [Service]
-User=root
-Type=notify
 ExecStart=/etc/peanut/peanut api -c /etc/peanut/config.dist.yml
-Restart=always
-RestartSec=10s
-LimitNOFILE=40000
+Restart=on-failure
+RestartSec=2
 
 [Install]
 WantedBy=multi-user.target" > /etc/systemd/system/peanut.service
@@ -106,4 +104,3 @@ docker
 docker_compose
 etcd
 peanut
-
