@@ -31,9 +31,9 @@ type Message struct {
 
 // Workers type
 type Workers struct {
-	job           *model.Job
-	broadcast     chan Message
-	dockerCompose *runtime.DockerCompose
+	job            *model.Job
+	broadcast      chan Message
+	virtualization runtime.Virtualization
 }
 
 // NewWorkers get a new workers instance
@@ -50,7 +50,12 @@ func NewWorkers() *Workers {
 
 	result.job = model.NewJobStore(db)
 	result.broadcast = make(chan Message, viper.GetInt("app.workers.buffer"))
-	result.dockerCompose = runtime.NewDockerCompose()
+
+	if viper.GetString("app.virtualization") == "docker_compose" {
+		result.virtualization = runtime.NewDockerCompose()
+	} else {
+		panic("Invalid virtualization runtime!")
+	}
 
 	return result
 }
@@ -83,6 +88,7 @@ func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
 		"message":        message,
 	}).Info(`Incoming request`)
 
+	// Create a async job
 	err = w.job.CreateRecord(model.JobRecord{
 		ID: message.JobID,
 		Service: model.ServiceRecord{
@@ -145,8 +151,8 @@ func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup
 			"message":        message,
 		}).Info(`Worker received a new message`)
 
-		// Process message
-		w.dockerCompose.Deploy(model.ServiceRecord{
+		// Deploy the service
+		w.virtualization.Deploy(model.ServiceRecord{
 			ID:          message.ServiceID,
 			Template:    message.Template,
 			Configs:     message.Configs,
@@ -156,7 +162,7 @@ func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,
 			"message":        message,
-		}).Info(`Worker finished processing`)
+		}).Info(`Worker finished deploying the service`)
 
 		notifyChannel <- message
 	}
@@ -167,6 +173,7 @@ func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup
 // Finalize finalizes a request
 func (w *Workers) Finalize(notifyChannel <-chan Message) {
 	for message := range notifyChannel {
+		// Store the service data
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,
 			"message":        message,

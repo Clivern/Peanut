@@ -12,6 +12,9 @@ app:
         pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
 
+    # App Virtualization (supported docker_compose)
+    virtualization: ${PEANUT_VIRTUALIZATION_RUNTIME:-docker_compose}
+
     # App Storage
     storage:
         # Type (only local supported)

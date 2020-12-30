@@ -4,7 +4,17 @@
 
 package runtime
 
+import (
+	"github.com/clivern/peanut/core/model"
+)
+
 const (
 	// RedisDockerImage constant
 	RedisDockerImage = "redis:5.0.10-alpine"
 )
+
+// Virtualization interface
+type Virtualization interface {
+	Deploy(service model.ServiceRecord) error
+	Destroy(service model.ServiceRecord) error
+}
