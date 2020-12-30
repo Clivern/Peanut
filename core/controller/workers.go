@@ -31,8 +31,8 @@ type Message struct {
 
 // Workers type
 type Workers struct {
-	job            *model.Job
-	broadcast      chan Message
+	job              *model.Job
+	broadcast        chan Message
 	containerization runtime.Containerization
 }
 
