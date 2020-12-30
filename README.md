@@ -28,7 +28,7 @@
 </p>
 <br/>
 
-Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like `SQL`, `NoSQL`, message brokers, `graphing`, `time series` databases ... etc. It perfectly suited for developmenet, manual and automated testing pipelines.
+Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like `SQL`, `NoSQL`, `message brokers`, `graphing`, `time series databases` ... etc. It perfectly suited for developmenet, manual and automated testing pipelines.
 
 Under the hood, it works with the containerization runtime like `docker`, `LXC` to deploy and configure the service. Rest assured you can achieve the same with a bunch of `YAML` files or using a package manager like `helm` but peanut is pretty small and fun to use & should spead up your workflow. Plus peanut will maintain the `YAML` for you!
 
@@ -75,8 +75,8 @@ app:
         pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
 
-    # App Virtualization (supported docker_compose)
-    virtualization: ${PEANUT_VIRTUALIZATION_RUNTIME:-docker_compose}
+    # Containerization runtime (supported docker_compose)
+    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker_compose}
 
     # App Storage
     storage:
