@@ -30,7 +30,7 @@
 
 Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like `SQL`, `NoSQL`, message brokers, `graphing`, `time series` databases ... etc. It perfectly suited for developmenet, manual and automated testing pipelines.
 
-Under the hood, it works with the containerization runtime like `docker`, `LXC` to deploy and configure the service. Rest assured you can achieve the same with a bunch of `YAML` files or using a package manager like `helm` but peanut is pretty small and fun to use & should spead up your workflow.
+Under the hood, it works with the containerization runtime like `docker`, `LXC` to deploy and configure the service. Rest assured you can achieve the same with a bunch of `YAML` files or using a package manager like `helm` but peanut is pretty small and fun to use & should spead up your workflow. Plus peanut will maintain the `YAML` for you!
 
 
 ## Documentation
