@@ -18,12 +18,13 @@ type DockerComposeConfig struct {
 
 // Service type
 type Service struct {
-	Image     string   `yaml:"image"`
-	Volumes   []string `yaml:"volumes,omitempty"`
-	Networks  []string `yaml:"networks,omitempty"`
-	DependsOn []string `yaml:"depends_on,omitempty"`
-	Ports     []string `yaml:"ports,omitempty"`
-	Restart   string   `yaml:"restart,omitempty"`
+	Image       string   `yaml:"image"`
+	Volumes     []string `yaml:"volumes,omitempty"`
+	Networks    []string `yaml:"networks,omitempty"`
+	Environment []string `yaml:"environment,omitempty"`
+	DependsOn   []string `yaml:"depends_on,omitempty"`
+	Ports       []string `yaml:"ports,omitempty"`
+	Restart     string   `yaml:"restart,omitempty"`
 }
 
 // ToString converts object to a string

@@ -25,11 +25,18 @@ const (
 
 	// SuccessStatus constant
 	SuccessStatus = "@success"
+
+	// DeployJob constant
+	DeployJob = "@deployService"
+
+	// DestroyJob constant
+	DestroyJob = "@destroyService"
 )
 
 // JobRecord type
 type JobRecord struct {
 	ID        string        `json:"id"`
+	Action    string        `json:"action"`
 	Service   ServiceRecord `json:"service"`
 	Status    string        `json:"status"`
 	CreatedAt int64         `json:"createdAt"`

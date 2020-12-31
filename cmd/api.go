@@ -160,18 +160,31 @@ var towerCmd = &cobra.Command{
 					return
 				}
 
-				workers.BroadcastRequest(c, rawBody)
+				workers.DeployRequest(c, rawBody)
+			})
+
+			apiv1.DELETE("/service/:serviceId", func(c *gin.Context) {
+				rawBody, err := c.GetRawData()
+
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status": "error",
+						"error":  "Invalid request",
+					})
+					return
+				}
+
+				workers.DestroyRequest(c, rawBody)
 			})
 
 			apiv1.GET("/service", controller.GetServices)
 			apiv1.GET("/service/:serviceId", controller.GetService)
-			apiv1.DELETE("/service/:serviceId", controller.DeleteService)
-
 			apiv1.GET("/job", controller.GetJobs)
 			apiv1.GET("/job/:jobId", controller.GetJob)
 			apiv1.DELETE("/job/:jobId", controller.DeleteJob)
 		}
 
+		go workers.Watch()
 		go workers.Finalize(workers.HandleWorkload())
 
 		var runerr error

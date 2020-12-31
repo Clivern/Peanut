@@ -11,6 +11,7 @@ import (
 	"github.com/clivern/peanut/core/model"
 	"github.com/clivern/peanut/core/util"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -42,9 +43,10 @@ func (d *DockerCompose) Destroy(service model.ServiceRecord) error {
 // deployRedis deploys a redis
 func (d *DockerCompose) deployRedis(service model.ServiceRecord) error {
 	redis := definition.GetRedisConfig(
-		RedisDockerImage,
-		definition.RedisPort,
-		"unless-stopped",
+		service.GetConfig("image", RedisDockerImage),
+		service.GetConfig("port", definition.RedisPort),
+		service.GetConfig("restartPolicy", "unless-stopped"),
+		service.GetConfig("password", ""),
 	)
 
 	result, err := redis.ToString()
@@ -62,11 +64,17 @@ func (d *DockerCompose) deployRedis(service model.ServiceRecord) error {
 		return err
 	}
 
-	stdout, stderr, err := util.Exec(fmt.Sprintf(
+	command := fmt.Sprintf(
 		"docker-compose -f %s/%s.yml up -d --force-recreate",
 		viper.GetString("app.storage.path"),
 		service.ID,
-	))
+	)
+
+	stdout, stderr, err := util.Exec(command)
+
+	log.WithFields(log.Fields{
+		"command": command,
+	}).Info("Run a shell command")
 
 	if err != nil {
 		return err

@@ -10,7 +10,7 @@ import (
 
 const (
 	// RedisDockerImage constant
-	RedisDockerImage = "redis:5.0.10-alpine"
+	RedisDockerImage = "bitnami/redis:6.2.4"
 )
 
 // Containerization interface

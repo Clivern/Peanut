@@ -36,6 +36,16 @@ type Service struct {
 	db driver.Database
 }
 
+// GetConfig get a config value
+func (s *ServiceRecord) GetConfig(key, def string) string {
+
+	if val, ok := s.Configs[key]; ok {
+		return val
+	}
+
+	return def
+}
+
 // NewServiceStore creates a new instance
 func NewServiceStore(db driver.Database) *Service {
 	result := new(Service)

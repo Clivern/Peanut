@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.5-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.6-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.5">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.6">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -67,16 +67,16 @@ app:
     mode: ${PEANUT_APP_MODE:-dev}
     # HTTP port
     port: ${PEANUT_API_PORT:-8000}
-    # URL
-    url: ${PEANUT_API_URL:-http://127.0.0.1:8000}
+    # Hostname
+    hostname: ${PEANUT_API_HOSTNAME:-127.0.0.1}
     # TLS configs
     tls:
         status: ${PEANUT_API_TLS_STATUS:-off}
         pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
 
-    # Containerization runtime (supported docker_compose)
-    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker_compose}
+    # Containerization runtime (supported docker)
+    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker}
 
     # App Storage
     storage:

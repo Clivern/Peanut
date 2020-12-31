@@ -14,15 +14,24 @@ const (
 )
 
 // GetRedisConfig gets yaml definition object
-func GetRedisConfig(image, port, restart string) *DockerComposeConfig {
+func GetRedisConfig(image, port, restart, password string) *DockerComposeConfig {
 	services := make(map[string]Service)
 	volumes := make(map[string]string)
+
+	envVar1 := "ALLOW_EMPTY_PASSWORD=yes"
+
+	if password != "" {
+		envVar1 = fmt.Sprintf("REDIS_PASSWORD=%s", password)
+	}
 
 	services["redis"] = Service{
 		Image:   image,
 		Restart: restart,
 		Ports: []string{
 			fmt.Sprintf("%s:%s", RedisPort, port),
+		},
+		Environment: []string{
+			envVar1,
 		},
 	}
 

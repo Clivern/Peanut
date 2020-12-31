@@ -19,19 +19,77 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Message type
-type Message struct {
+// Message interface
+type Message interface {
+	GetCorrelation() string
+	GetService() string
+	GetJob() string
+	GetType() string
+}
+
+// DeployRequest type
+type DeployRequest struct {
 	JobID         string            `json:"jobId"`
 	ServiceID     string            `json:"serviceId"`
 	Template      string            `json:"template"`
 	Configs       map[string]string `json:"configs"`
 	DeleteAfter   string            `json:"deleteAfter"`
+	Type          string            `json:"type"`
 	CorrelationID string            `json:"correlationID"`
+}
+
+// DestroyRequest type
+type DestroyRequest struct {
+	JobID         string `json:"jobId"`
+	ServiceID     string `json:"serviceId"`
+	Type          string `json:"type"`
+	CorrelationID string `json:"correlationID"`
+}
+
+// GetCorrelation gets the correlation id
+func (d DeployRequest) GetCorrelation() string {
+	return d.CorrelationID
+}
+
+// GetService gets the service id
+func (d DeployRequest) GetService() string {
+	return d.ServiceID
+}
+
+// GetJob gets the job id
+func (d DeployRequest) GetJob() string {
+	return d.JobID
+}
+
+// GetType gets the job type
+func (d DeployRequest) GetType() string {
+	return d.Type
+}
+
+// GetCorrelation gets the correlation id
+func (d DestroyRequest) GetCorrelation() string {
+	return d.CorrelationID
+}
+
+// GetService gets the service id
+func (d DestroyRequest) GetService() string {
+	return d.ServiceID
+}
+
+// GetJob gets the job id
+func (d DestroyRequest) GetJob() string {
+	return d.JobID
+}
+
+// GetType gets the job type
+func (d DestroyRequest) GetType() string {
+	return d.Type
 }
 
 // Workers type
 type Workers struct {
 	job              *model.Job
+	service          *model.Service
 	broadcast        chan Message
 	containerization runtime.Containerization
 }
@@ -49,9 +107,10 @@ func NewWorkers() *Workers {
 	}
 
 	result.job = model.NewJobStore(db)
+	result.service = model.NewServiceStore(db)
 	result.broadcast = make(chan Message, viper.GetInt("app.workers.buffer"))
 
-	if viper.GetString("app.containerization") == "docker_compose" {
+	if viper.GetString("app.containerization") == "docker" {
 		result.containerization = runtime.NewDockerCompose()
 	} else {
 		panic("Invalid containerization runtime!")
@@ -60,13 +119,11 @@ func NewWorkers() *Workers {
 	return result
 }
 
-// BroadcastRequest sends a request to workers
-func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
-	message := &Message{}
+// DeployRequest sends a deploy request to workers
+func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
+	message := &DeployRequest{}
 
 	err := util.LoadFromJSON(message, rawBody)
-
-	message.CorrelationID = c.GetHeader("x-correlation-id")
 
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -80,17 +137,20 @@ func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
 		return
 	}
 
+	message.CorrelationID = c.GetHeader("x-correlation-id")
 	message.JobID = util.GenerateUUID4()
 	message.ServiceID = util.GenerateUUID4()
+	message.Type = "DeployRequest"
 
 	log.WithFields(log.Fields{
-		"correlation_id": message.CorrelationID,
+		"correlation_id": message.GetCorrelation(),
 		"message":        message,
 	}).Info(`Incoming request`)
 
 	// Create a async job
 	err = w.job.CreateRecord(model.JobRecord{
-		ID: message.JobID,
+		ID:     message.JobID,
+		Action: model.DeployJob,
 		Service: model.ServiceRecord{
 			ID:          message.ServiceID,
 			Template:    message.Template,
@@ -116,8 +176,55 @@ func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
 	w.broadcast <- *message
 
 	c.JSON(http.StatusAccepted, gin.H{
-		"id":        message.JobID,
-		"type":      "service.provision",
+		"id":        message.GetJob(),
+		"type":      "service.deploy",
+		"status":    "PENDING",
+		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
+	})
+}
+
+// DestroyRequest sends a destroy request to workers
+func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
+	message := DestroyRequest{
+		CorrelationID: c.GetHeader("x-correlation-id"),
+		ServiceID:     c.Param("serviceId"),
+		JobID:         util.GenerateUUID4(),
+		Type:          "DestroyRequest",
+	}
+
+	log.WithFields(log.Fields{
+		"correlation_id": message.GetCorrelation(),
+		"message":        message,
+	}).Info(`Incoming request`)
+
+	// Create a async job
+	err := w.job.CreateRecord(model.JobRecord{
+		ID:     message.JobID,
+		Action: model.DestroyJob,
+		Service: model.ServiceRecord{
+			ID: message.ServiceID,
+		},
+		Status: model.PendingStatus,
+	})
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	w.broadcast <- message
+
+	c.JSON(http.StatusAccepted, gin.H{
+		"id":        message.GetJob(),
+		"type":      "service.destroy",
 		"status":    "PENDING",
 		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
 	})
@@ -132,7 +239,7 @@ func (w *Workers) HandleWorkload() <-chan Message {
 
 		for t := 0; t < viper.GetInt("app.workers.count"); t++ {
 			wg.Add(1)
-			go w.DeployService(notifyChannel, wg)
+			go w.ProcessRequest(notifyChannel, wg)
 		}
 
 		wg.Wait()
@@ -143,26 +250,66 @@ func (w *Workers) HandleWorkload() <-chan Message {
 	return notifyChannel
 }
 
-// DeployService process incoming request
-func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup) {
+// ProcessRequest process incoming request
+func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGroup) {
+	var err error
+
 	for message := range w.broadcast {
 		log.WithFields(log.Fields{
-			"correlation_id": message.CorrelationID,
+			"correlation_id": message.GetCorrelation(),
 			"message":        message,
 		}).Info(`Worker received a new message`)
 
-		// Deploy the service
-		w.containerization.Deploy(model.ServiceRecord{
-			ID:          message.ServiceID,
-			Template:    message.Template,
-			Configs:     message.Configs,
-			DeleteAfter: message.DeleteAfter,
-		})
+		switch message.GetType() {
+		case "DeployRequest":
+			// Deploy the service
+			err = w.containerization.Deploy(model.ServiceRecord{
+				ID:          message.(DeployRequest).ServiceID,
+				Template:    message.(DeployRequest).Template,
+				Configs:     message.(DeployRequest).Configs,
+				DeleteAfter: message.(DeployRequest).DeleteAfter,
+			})
+		case "DestroyRequest":
+			// Destroy the service
+			err = w.containerization.Destroy(model.ServiceRecord{
+				ID: message.(DestroyRequest).ServiceID,
+			})
+		default:
+			log.WithFields(log.Fields{
+				"correlation_id": message.GetCorrelation(),
+				"type":           message.GetType(),
+			}).Error(`Failed to find message type `)
+		}
+
+		// Update Job Status
+		job, errr := w.job.GetRecord(message.GetService(), message.GetJob())
+
+		if errr != nil {
+			log.WithFields(log.Fields{
+				"correlation_id": message.GetCorrelation(),
+				"error":          errr.Error(),
+			}).Error(`Worker failed to find the async job`)
+			continue
+		}
+
+		if err == nil {
+			job.Status = model.SuccessStatus
+		} else {
+			job.Status = model.FailedStatus
+
+			log.WithFields(log.Fields{
+				"correlation_id": message.GetCorrelation(),
+				"message":        message,
+				"error":          err.Error(),
+			}).Error(`Worker failed to process message`)
+		}
+
+		w.job.UpdateRecord(*job)
 
 		log.WithFields(log.Fields{
-			"correlation_id": message.CorrelationID,
+			"correlation_id": message.GetCorrelation(),
 			"message":        message,
-		}).Info(`Worker finished deploying the service`)
+		}).Info(`Worker finished processing the message`)
 
 		notifyChannel <- message
 	}
@@ -173,10 +320,29 @@ func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup
 // Finalize finalizes a request
 func (w *Workers) Finalize(notifyChannel <-chan Message) {
 	for message := range notifyChannel {
-		// Store the service data
+		switch message.GetType() {
+		case "DeployRequest":
+			w.service.CreateRecord(model.ServiceRecord{
+				ID:          message.GetService(),
+				Template:    message.(DeployRequest).Template,
+				Configs:     message.(DeployRequest).Configs,
+				DeleteAfter: message.(DeployRequest).DeleteAfter,
+			})
+		case "DestroyRequest":
+			// Delete service if no error raised
+			w.service.DeleteRecord(message.GetService())
+		}
+
 		log.WithFields(log.Fields{
-			"correlation_id": message.CorrelationID,
+			"correlation_id": message.GetCorrelation(),
 			"message":        message,
 		}).Info(`Worker finalize processing`)
+	}
+}
+
+// Watch watches for a pending jobs
+func (w *Workers) Watch() {
+	for {
+		time.Sleep(5 * time.Second)
 	}
 }

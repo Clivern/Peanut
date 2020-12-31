@@ -4,16 +4,16 @@ app:
     mode: ${PEANUT_APP_MODE:-dev}
     # HTTP port
     port: ${PEANUT_API_PORT:-8000}
-    # URL
-    url: ${PEANUT_API_URL:-http://127.0.0.1:8000}
+    # Hostname
+    hostname: ${PEANUT_API_HOSTNAME:-127.0.0.1}
     # TLS configs
     tls:
         status: ${PEANUT_API_TLS_STATUS:-off}
         pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
 
-    # Containerization runtime (supported docker_compose)
-    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker_compose}
+    # Containerization runtime (supported docker)
+    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker}
 
     # App Storage
     storage:
