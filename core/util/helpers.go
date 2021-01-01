@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -217,4 +218,9 @@ func IsEmpty(item string) bool {
 		return true
 	}
 	return false
+}
+
+// Rand gets a random number
+func Rand(min, max int) int {
+	return rand.Intn(max-min) + min
 }

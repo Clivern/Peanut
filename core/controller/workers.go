@@ -19,73 +19,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Message interface
-type Message interface {
-	GetCorrelation() string
-	GetService() string
-	GetJob() string
-	GetType() string
-}
-
-// DeployRequest type
-type DeployRequest struct {
-	JobID         string            `json:"jobId"`
-	ServiceID     string            `json:"serviceId"`
-	Template      string            `json:"template"`
-	Configs       map[string]string `json:"configs"`
-	DeleteAfter   string            `json:"deleteAfter"`
-	Type          string            `json:"type"`
-	CorrelationID string            `json:"correlationID"`
-}
-
-// DestroyRequest type
-type DestroyRequest struct {
-	JobID         string `json:"jobId"`
-	ServiceID     string `json:"serviceId"`
-	Type          string `json:"type"`
-	CorrelationID string `json:"correlationID"`
-}
-
-// GetCorrelation gets the correlation id
-func (d DeployRequest) GetCorrelation() string {
-	return d.CorrelationID
-}
-
-// GetService gets the service id
-func (d DeployRequest) GetService() string {
-	return d.ServiceID
-}
-
-// GetJob gets the job id
-func (d DeployRequest) GetJob() string {
-	return d.JobID
-}
-
-// GetType gets the job type
-func (d DeployRequest) GetType() string {
-	return d.Type
-}
-
-// GetCorrelation gets the correlation id
-func (d DestroyRequest) GetCorrelation() string {
-	return d.CorrelationID
-}
-
-// GetService gets the service id
-func (d DestroyRequest) GetService() string {
-	return d.ServiceID
-}
-
-// GetJob gets the job id
-func (d DestroyRequest) GetJob() string {
-	return d.JobID
-}
-
-// GetType gets the job type
-func (d DestroyRequest) GetType() string {
-	return d.Type
-}
-
 // Workers type
 type Workers struct {
 	job              *model.Job
@@ -128,7 +61,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 	if err != nil {
 		log.WithFields(log.Fields{
 			"error": err.Error(),
-		}).Error(`Invalid message`)
+		}).Debug(`Invalid message`)
 
 		c.JSON(http.StatusBadRequest, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
@@ -192,13 +125,27 @@ func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
 		Type:          "DestroyRequest",
 	}
 
+	service, err := w.service.GetRecord(c.Param("serviceId"))
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Error! service not found",
+		})
+		return
+	}
+
+	message.Template = service.Template
+	message.Configs = service.Configs
+	message.DeleteAfter = service.DeleteAfter
+
 	log.WithFields(log.Fields{
 		"correlation_id": message.GetCorrelation(),
 		"message":        message,
 	}).Info(`Incoming request`)
 
 	// Create a async job
-	err := w.job.CreateRecord(model.JobRecord{
+	err = w.job.CreateRecord(model.JobRecord{
 		ID:     message.JobID,
 		Action: model.DestroyJob,
 		Service: model.ServiceRecord{
@@ -263,16 +210,27 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 		switch message.GetType() {
 		case "DeployRequest":
 			// Deploy the service
-			err = w.containerization.Deploy(model.ServiceRecord{
+			depr := DeployRequest{}
+			result := make(map[string]string)
+
+			result, err = w.containerization.Deploy(model.ServiceRecord{
 				ID:          message.(DeployRequest).ServiceID,
 				Template:    message.(DeployRequest).Template,
 				Configs:     message.(DeployRequest).Configs,
 				DeleteAfter: message.(DeployRequest).DeleteAfter,
 			})
+
+			// Override configs
+			depr = message.(DeployRequest)
+			depr.Configs = result
+			message = depr
 		case "DestroyRequest":
 			// Destroy the service
 			err = w.containerization.Destroy(model.ServiceRecord{
-				ID: message.(DestroyRequest).ServiceID,
+				ID:          message.(DestroyRequest).ServiceID,
+				Template:    message.(DestroyRequest).Template,
+				Configs:     message.(DestroyRequest).Configs,
+				DeleteAfter: message.(DestroyRequest).DeleteAfter,
 			})
 		default:
 			log.WithFields(log.Fields{

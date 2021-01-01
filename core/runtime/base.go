@@ -15,6 +15,6 @@ const (
 
 // Containerization interface
 type Containerization interface {
-	Deploy(service model.ServiceRecord) error
+	Deploy(service model.ServiceRecord) (map[string]string, error)
 	Destroy(service model.ServiceRecord) error
 }

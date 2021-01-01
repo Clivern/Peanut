@@ -38,7 +38,6 @@ type Service struct {
 
 // GetConfig get a config value
 func (s *ServiceRecord) GetConfig(key, def string) string {
-
 	if val, ok := s.Configs[key]; ok {
 		return val
 	}

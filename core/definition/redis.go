@@ -10,7 +10,9 @@ import (
 
 const (
 	// RedisPort const
-	RedisPort = "6379"
+	RedisPort      = "6379"
+	RedisPortStart = 6300
+	RedisPortEnd   = 6400
 )
 
 // GetRedisConfig gets yaml definition object
