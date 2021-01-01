@@ -24,7 +24,6 @@ type ServicePayload struct {
 	Service     string            `json:"service"`
 	Configs     map[string]string `json:"configs"`
 	DeleteAfter string            `json:"deleteAfter"`
-	Address     string            `json:"address"`
 	CreatedAt   time.Time         `json:"createdAt"`
 	UpdatedAt   time.Time         `json:"updatedAt"`
 }
@@ -70,12 +69,13 @@ func GetServices(c *gin.Context) {
 	var services []ServicePayload
 
 	for _, v := range data {
+		v.Configs["address"] = viper.GetString("app.hostname")
+
 		services = append(services, ServicePayload{
 			ID:          v.ID,
 			Service:     v.Service,
 			Configs:     v.Configs,
 			DeleteAfter: v.DeleteAfter,
-			Address:     viper.GetString("app.hostname"),
 			CreatedAt:   time.Unix(v.CreatedAt, 0),
 			UpdatedAt:   time.Unix(v.UpdatedAt, 0),
 		})
@@ -134,12 +134,13 @@ func GetService(c *gin.Context) {
 		return
 	}
 
+	serviceData.Configs["address"] = viper.GetString("app.hostname")
+
 	c.JSON(http.StatusOK, gin.H{
 		"id":          serviceData.ID,
 		"service":     serviceData.Service,
 		"configs":     serviceData.Configs,
 		"deleteAfter": serviceData.DeleteAfter,
-		"address":     viper.GetString("app.hostname"),
 		"createdAt":   time.Unix(serviceData.CreatedAt, 0),
 		"updatedAt":   time.Unix(serviceData.UpdatedAt, 0),
 	})
