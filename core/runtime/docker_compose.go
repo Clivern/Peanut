@@ -36,7 +36,9 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 	// Deploy Redis
 	if model.RedisService == service {
-		def = definition.GetRedisConfig(serviceID, util.GetVal(configs, "password", ""))
+		dynamicConfigs["password"] = util.GetVal(configs, "password", "")
+
+		def = definition.GetRedisConfig(serviceID, dynamicConfigs["password"])
 
 		err = d.deployService(serviceID, def)
 
@@ -70,6 +72,44 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 	}
 
 	return d.Prune()
+}
+
+// Prune remove all unused containers, networks, images
+func (d *DockerCompose) Prune() error {
+	command := "docker system prune -a -f --volumes"
+
+	stdout, stderr, err := util.Exec(command)
+
+	log.WithFields(log.Fields{
+		"command": command,
+	}).Info("Run a shell command")
+
+	if err != nil {
+		return err
+	}
+
+	// Store runtime verbose logs only in dev environment
+	if viper.GetString("app.mode") == "dev" {
+		err = util.StoreFile(
+			fmt.Sprintf("%s/prune.stdout.log", viper.GetString("app.storage.path")),
+			stdout,
+		)
+
+		if err != nil {
+			return err
+		}
+
+		err = util.StoreFile(
+			fmt.Sprintf("%s/prune.stderr.log", viper.GetString("app.storage.path")),
+			stderr,
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // deployService deploys a service
@@ -246,42 +286,4 @@ func (d *DockerCompose) fetchServicePort(serviceID string, port string, definiti
 	}
 
 	return strings.TrimSuffix(strings.Replace(stdout, "0.0.0.0:", "", -1), "\n"), nil
-}
-
-// Prune remove all unused containers, networks, images
-func (d *DockerCompose) Prune() error {
-	command := "docker system prune -a -f --volumes"
-
-	stdout, stderr, err := util.Exec(command)
-
-	log.WithFields(log.Fields{
-		"command": command,
-	}).Info("Run a shell command")
-
-	if err != nil {
-		return err
-	}
-
-	// Store runtime verbose logs only in dev environment
-	if viper.GetString("app.mode") == "dev" {
-		err = util.StoreFile(
-			fmt.Sprintf("%s/prune.stdout.log", viper.GetString("app.storage.path")),
-			stdout,
-		)
-
-		if err != nil {
-			return err
-		}
-
-		err = util.StoreFile(
-			fmt.Sprintf("%s/prune.stderr.log", viper.GetString("app.storage.path")),
-			stderr,
-		)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
