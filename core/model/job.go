@@ -120,7 +120,7 @@ func (j *Job) UpdateRecord(record JobRecord) error {
 }
 
 // GetRecord gets job record data
-func (j *Job) GetRecord(serviceID, jobID string) (*JobRecord, error) {
+func (j *Job) GetRecord(serviceID, jobID string) (JobRecord, error) {
 	recordData := &JobRecord{}
 
 	log.WithFields(log.Fields{
@@ -136,7 +136,7 @@ func (j *Job) GetRecord(serviceID, jobID string) (*JobRecord, error) {
 	))
 
 	if err != nil {
-		return recordData, err
+		return *recordData, err
 	}
 
 	for k, v := range data {
@@ -145,14 +145,14 @@ func (j *Job) GetRecord(serviceID, jobID string) (*JobRecord, error) {
 			err = util.LoadFromJSON(recordData, []byte(v))
 
 			if err != nil {
-				return recordData, err
+				return *recordData, err
 			}
 
-			return recordData, nil
+			return *recordData, nil
 		}
 	}
 
-	return recordData, fmt.Errorf(
+	return *recordData, fmt.Errorf(
 		"Unable to find job record with id: %s and service id: %s",
 		jobID,
 		serviceID,
@@ -179,78 +179,4 @@ func (j *Job) DeleteRecord(serviceID, jobID string) (bool, error) {
 	}
 
 	return count > 0, nil
-}
-
-// GetServiceJobs get jobs for a service
-func (j *Job) GetServiceJobs(serviceID string) ([]*JobRecord, error) {
-
-	log.Debug("Get jobs to run")
-
-	records := make([]*JobRecord, 0)
-
-	data, err := j.db.Get(fmt.Sprintf(
-		"%s/service/%s/job",
-		viper.GetString("app.database.etcd.databaseName"),
-		serviceID,
-	))
-
-	if err != nil {
-		return records, err
-	}
-
-	for k, v := range data {
-		// Check if it is the data key
-		if strings.Contains(k, "/j-data") {
-			recordData := &JobRecord{}
-
-			err = util.LoadFromJSON(recordData, []byte(v))
-
-			if err != nil {
-				return records, err
-			}
-
-			records = append(records, recordData)
-		}
-	}
-
-	return records, nil
-}
-
-// CountServiceJobs counts service jobs
-func (j *Job) CountServiceJobs(serviceID, status string) (int, error) {
-
-	log.Debug("Count service jobs")
-
-	count := 0
-
-	data, err := j.db.Get(fmt.Sprintf(
-		"%s/service/%s/job",
-		viper.GetString("app.database.etcd.databaseName"),
-		serviceID,
-	))
-
-	if err != nil {
-		return count, err
-	}
-
-	for k, v := range data {
-		// Check if it is the data key
-		if strings.Contains(k, "/j-data") {
-			recordData := &JobRecord{}
-
-			err = util.LoadFromJSON(recordData, []byte(v))
-
-			if err != nil {
-				return count, err
-			}
-
-			if recordData.Status != status {
-				continue
-			}
-
-			count++
-		}
-	}
-
-	return count, nil
 }

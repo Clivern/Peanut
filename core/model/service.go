@@ -36,15 +36,6 @@ type Service struct {
 	db driver.Database
 }
 
-// GetConfig get a config value
-func (s *ServiceRecord) GetConfig(key, def string) string {
-	if val, ok := s.Configs[key]; ok {
-		return val
-	}
-
-	return def
-}
-
 // NewServiceStore creates a new instance
 func NewServiceStore(db driver.Database) *Service {
 	result := new(Service)
@@ -113,7 +104,7 @@ func (s *Service) UpdateRecord(record ServiceRecord) error {
 }
 
 // GetRecord gets service record data
-func (s *Service) GetRecord(serviceID string) (*ServiceRecord, error) {
+func (s *Service) GetRecord(serviceID string) (ServiceRecord, error) {
 	recordData := &ServiceRecord{}
 
 	log.WithFields(log.Fields{
@@ -127,7 +118,7 @@ func (s *Service) GetRecord(serviceID string) (*ServiceRecord, error) {
 	))
 
 	if err != nil {
-		return recordData, err
+		return *recordData, err
 	}
 
 	for k, v := range data {
@@ -136,17 +127,49 @@ func (s *Service) GetRecord(serviceID string) (*ServiceRecord, error) {
 			err = util.LoadFromJSON(recordData, []byte(v))
 
 			if err != nil {
-				return recordData, err
+				return *recordData, err
 			}
 
-			return recordData, nil
+			return *recordData, nil
 		}
 	}
 
-	return recordData, fmt.Errorf(
+	return *recordData, fmt.Errorf(
 		"Unable to find service record with id: %s",
 		serviceID,
 	)
+}
+
+// GetRecords get services
+func (s *Service) GetRecords() ([]ServiceRecord, error) {
+	records := make([]ServiceRecord, 0)
+
+	log.Debug("Get services")
+
+	data, err := s.db.Get(fmt.Sprintf(
+		"%s/service",
+		viper.GetString("app.database.etcd.databaseName"),
+	))
+
+	if err != nil {
+		return records, err
+	}
+
+	for k, v := range data {
+		if strings.Contains(k, "/s-data") {
+			recordData := &ServiceRecord{}
+
+			err = util.LoadFromJSON(recordData, []byte(v))
+
+			if err != nil {
+				return records, err
+			}
+
+			records = append(records, *recordData)
+		}
+	}
+
+	return records, nil
 }
 
 // DeleteRecord deletes a service record

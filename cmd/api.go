@@ -131,6 +131,7 @@ var towerCmd = &cobra.Command{
 		r.Use(middleware.Correlation())
 		r.Use(middleware.Logger())
 		r.Use(middleware.Metric())
+		r.Use(middleware.Auth())
 
 		r.GET("/favicon.ico", func(c *gin.Context) {
 			c.String(http.StatusNoContent, "")
@@ -164,24 +165,12 @@ var towerCmd = &cobra.Command{
 			})
 
 			apiv1.DELETE("/service/:serviceId", func(c *gin.Context) {
-				rawBody, err := c.GetRawData()
-
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{
-						"status": "error",
-						"error":  "Invalid request",
-					})
-					return
-				}
-
-				workers.DestroyRequest(c, rawBody)
+				workers.DestroyRequest(c)
 			})
 
 			apiv1.GET("/service", controller.GetServices)
 			apiv1.GET("/service/:serviceId", controller.GetService)
-			apiv1.GET("/job", controller.GetJobs)
-			apiv1.GET("/job/:jobId", controller.GetJob)
-			apiv1.DELETE("/job/:jobId", controller.DeleteJob)
+			apiv1.GET("/job/:serviceId/:jobId", controller.GetJob)
 		}
 
 		go workers.Watch()

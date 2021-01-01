@@ -5,25 +5,72 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
+	"time"
+
+	"github.com/clivern/peanut/core/driver"
+	"github.com/clivern/peanut/core/model"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
-
-// GetJobs controller
-func GetJobs(c *gin.Context) {
-	c.Status(http.StatusOK)
-	return
-}
 
 // GetJob controller
 func GetJob(c *gin.Context) {
-	c.Status(http.StatusOK)
-	return
-}
+	jobID := c.Param("jobId")
+	serviceID := c.Param("serviceId")
 
-// DeleteJob controller
-func DeleteJob(c *gin.Context) {
-	c.Status(http.StatusOK)
-	return
+	db := driver.NewEtcdDriver()
+
+	err := db.Connect()
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	defer db.Close()
+
+	jobStore := model.NewJobStore(db)
+
+	jobData, err := jobStore.GetRecord(serviceID, jobID)
+
+	if err != nil && strings.Contains(err.Error(), "Unable to find") {
+		c.JSON(http.StatusNotFound, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  fmt.Sprintf("Unable to find job: %s", jobID),
+		})
+		return
+	}
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":        jobData.ID,
+		"action":    jobData.Action,
+		"status":    jobData.Status,
+		"createdAt": time.Unix(jobData.CreatedAt, 0),
+		"updatedAt": time.Unix(jobData.UpdatedAt, 0),
+	})
 }

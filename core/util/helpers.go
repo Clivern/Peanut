@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/satori/go.uuid"
@@ -241,4 +242,23 @@ func MergeMaps(m1, m2 map[string]string) map[string]string {
 	}
 
 	return m1
+}
+
+// TimeInSec time period in seconds
+func TimeInSec(period string) int {
+	if strings.HasSuffix(period, "sec") {
+		i, _ := strconv.Atoi(strings.Replace(period, "sec", "", -1))
+		return i
+	} else if strings.HasSuffix(period, "min") {
+		i, _ := strconv.Atoi(strings.Replace(period, "min", "", -1))
+		return i * 60
+	} else if strings.HasSuffix(period, "hours") {
+		i, _ := strconv.Atoi(strings.Replace(period, "hours", "", -1))
+		return i * 60 * 60
+	} else if strings.HasSuffix(period, "days") {
+		i, _ := strconv.Atoi(strings.Replace(period, "days", "", -1))
+		return i * 60 * 60 * 24
+	} else {
+		return 0
+	}
 }

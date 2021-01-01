@@ -111,7 +111,7 @@ func (o *Option) UpdateOptions(options []OptionData) error {
 }
 
 // GetOptionByKey gets an option by a key
-func (o *Option) GetOptionByKey(key string) (*OptionData, error) {
+func (o *Option) GetOptionByKey(key string) (OptionData, error) {
 	optionResult := &OptionData{}
 
 	log.WithFields(log.Fields{
@@ -125,7 +125,7 @@ func (o *Option) GetOptionByKey(key string) (*OptionData, error) {
 	))
 
 	if err != nil {
-		return optionResult, err
+		return *optionResult, err
 	}
 
 	for k, v := range data {
@@ -134,14 +134,14 @@ func (o *Option) GetOptionByKey(key string) (*OptionData, error) {
 			err = util.LoadFromJSON(optionResult, []byte(v))
 
 			if err != nil {
-				return optionResult, err
+				return *optionResult, err
 			}
 
-			return optionResult, nil
+			return *optionResult, nil
 		}
 	}
 
-	return optionResult, fmt.Errorf(
+	return *optionResult, fmt.Errorf(
 		"Unable to find an option with a key: %s",
 		key,
 	)

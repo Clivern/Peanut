@@ -133,7 +133,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 }
 
 // DestroyRequest sends a destroy request to workers
-func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
+func (w *Workers) DestroyRequest(c *gin.Context) {
 	message := Message{
 		CorrelationID: c.GetHeader("x-correlation-id"),
 		ServiceID:     c.Param("serviceId"),
@@ -266,7 +266,7 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 			}).Error(`Worker failed to process message`)
 		}
 
-		w.job.UpdateRecord(*job)
+		w.job.UpdateRecord(job)
 
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,
@@ -304,6 +304,50 @@ func (w *Workers) Finalize(notifyChannel <-chan Message) {
 // Watch watches for a pending jobs
 func (w *Workers) Watch() {
 	for {
-		time.Sleep(5 * time.Second)
+		time.Sleep(20 * time.Second)
+
+		data, err := w.service.GetRecords()
+
+		if err != nil {
+			continue
+		}
+
+		for _, v := range data {
+			if v.DeleteAfter == "" {
+				continue
+			}
+
+			if v.CreatedAt+int64(util.TimeInSec(v.DeleteAfter)) > time.Now().Unix() {
+				continue
+			}
+
+			message := Message{
+				ServiceID:     v.ID,
+				JobID:         util.GenerateUUID4(),
+				Type:          "DestroyRequest",
+				Service:       v.Service,
+				Configs:       v.Configs,
+				DeleteAfter:   v.DeleteAfter,
+				CorrelationID: "",
+			}
+
+			w.job.CreateRecord(model.JobRecord{
+				ID:     message.JobID,
+				Action: model.DestroyJob,
+				Service: model.ServiceRecord{
+					ID:          message.ServiceID,
+					Service:     message.Service,
+					Configs:     message.Configs,
+					DeleteAfter: message.DeleteAfter,
+				},
+				Status: model.PendingStatus,
+			})
+
+			log.WithFields(log.Fields{
+				"message": message,
+			}).Info(`Destroy a service since due time reached`)
+
+			w.broadcast <- message
+		}
 	}
 }
