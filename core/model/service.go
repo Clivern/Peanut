@@ -18,13 +18,13 @@ import (
 
 const (
 	// RedisService constant
-	RedisService = "REDIS_SERVICE"
+	RedisService = "redis"
 )
 
 // ServiceRecord type
 type ServiceRecord struct {
 	ID          string            `json:"id"`
-	Template    string            `json:"template"`
+	Service     string            `json:"service"`
 	Configs     map[string]string `json:"configs"`
 	DeleteAfter string            `json:"deleteAfter"`
 	CreatedAt   int64             `json:"createdAt"`
@@ -66,7 +66,7 @@ func (s *Service) CreateRecord(record ServiceRecord) error {
 
 	log.WithFields(log.Fields{
 		"service_id": record.ID,
-		"template":   record.Template,
+		"service":    record.Service,
 	}).Debug("Create a service record")
 
 	// store service record data
@@ -95,7 +95,7 @@ func (s *Service) UpdateRecord(record ServiceRecord) error {
 
 	log.WithFields(log.Fields{
 		"service_id": record.ID,
-		"template":   record.Template,
+		"service":    record.Service,
 	}).Debug("Update a service record")
 
 	// store service record data

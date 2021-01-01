@@ -19,6 +19,17 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Message type
+type Message struct {
+	JobID         string            `json:"jobId"`
+	ServiceID     string            `json:"serviceId"`
+	Service       string            `json:"service"`
+	Configs       map[string]string `json:"configs"`
+	DeleteAfter   string            `json:"deleteAfter"`
+	Type          string            `json:"type"`
+	CorrelationID string            `json:"correlationID"`
+}
+
 // Workers type
 type Workers struct {
 	job              *model.Job
@@ -54,7 +65,7 @@ func NewWorkers() *Workers {
 
 // DeployRequest sends a deploy request to workers
 func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
-	message := &DeployRequest{}
+	message := &Message{}
 
 	err := util.LoadFromJSON(message, rawBody)
 
@@ -75,8 +86,12 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 	message.ServiceID = util.GenerateUUID4()
 	message.Type = "DeployRequest"
 
+	if message.Configs == nil {
+		message.Configs = map[string]string{}
+	}
+
 	log.WithFields(log.Fields{
-		"correlation_id": message.GetCorrelation(),
+		"correlation_id": message.CorrelationID,
 		"message":        message,
 	}).Info(`Incoming request`)
 
@@ -86,7 +101,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		Action: model.DeployJob,
 		Service: model.ServiceRecord{
 			ID:          message.ServiceID,
-			Template:    message.Template,
+			Service:     message.Service,
 			Configs:     message.Configs,
 			DeleteAfter: message.DeleteAfter,
 		},
@@ -109,7 +124,8 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 	w.broadcast <- *message
 
 	c.JSON(http.StatusAccepted, gin.H{
-		"id":        message.GetJob(),
+		"id":        message.JobID,
+		"service":   message.ServiceID,
 		"type":      "service.deploy",
 		"status":    "PENDING",
 		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
@@ -118,7 +134,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 
 // DestroyRequest sends a destroy request to workers
 func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
-	message := DestroyRequest{
+	message := Message{
 		CorrelationID: c.GetHeader("x-correlation-id"),
 		ServiceID:     c.Param("serviceId"),
 		JobID:         util.GenerateUUID4(),
@@ -135,12 +151,12 @@ func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
 		return
 	}
 
-	message.Template = service.Template
+	message.Service = service.Service
 	message.Configs = service.Configs
 	message.DeleteAfter = service.DeleteAfter
 
 	log.WithFields(log.Fields{
-		"correlation_id": message.GetCorrelation(),
+		"correlation_id": message.CorrelationID,
 		"message":        message,
 	}).Info(`Incoming request`)
 
@@ -149,7 +165,10 @@ func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
 		ID:     message.JobID,
 		Action: model.DestroyJob,
 		Service: model.ServiceRecord{
-			ID: message.ServiceID,
+			ID:          message.ServiceID,
+			Service:     message.Service,
+			Configs:     message.Configs,
+			DeleteAfter: message.DeleteAfter,
 		},
 		Status: model.PendingStatus,
 	})
@@ -170,7 +189,8 @@ func (w *Workers) DestroyRequest(c *gin.Context, rawBody []byte) {
 	w.broadcast <- message
 
 	c.JSON(http.StatusAccepted, gin.H{
-		"id":        message.GetJob(),
+		"id":        message.JobID,
+		"service":   message.ServiceID,
 		"type":      "service.destroy",
 		"status":    "PENDING",
 		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
@@ -203,48 +223,32 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 
 	for message := range w.broadcast {
 		log.WithFields(log.Fields{
-			"correlation_id": message.GetCorrelation(),
+			"correlation_id": message.CorrelationID,
 			"message":        message,
 		}).Info(`Worker received a new message`)
 
-		switch message.GetType() {
+		switch message.Type {
 		case "DeployRequest":
 			// Deploy the service
-			depr := DeployRequest{}
 			result := make(map[string]string)
-
-			result, err = w.containerization.Deploy(model.ServiceRecord{
-				ID:          message.(DeployRequest).ServiceID,
-				Template:    message.(DeployRequest).Template,
-				Configs:     message.(DeployRequest).Configs,
-				DeleteAfter: message.(DeployRequest).DeleteAfter,
-			})
-
-			// Override configs
-			depr = message.(DeployRequest)
-			depr.Configs = result
-			message = depr
+			result, err = w.containerization.Deploy(message.ServiceID, message.Service, message.Configs)
+			message.Configs = util.MergeMaps(message.Configs, result)
 		case "DestroyRequest":
 			// Destroy the service
-			err = w.containerization.Destroy(model.ServiceRecord{
-				ID:          message.(DestroyRequest).ServiceID,
-				Template:    message.(DestroyRequest).Template,
-				Configs:     message.(DestroyRequest).Configs,
-				DeleteAfter: message.(DestroyRequest).DeleteAfter,
-			})
+			err = w.containerization.Destroy(message.ServiceID, message.Service, message.Configs)
 		default:
 			log.WithFields(log.Fields{
-				"correlation_id": message.GetCorrelation(),
-				"type":           message.GetType(),
+				"correlation_id": message.CorrelationID,
+				"type":           message.Type,
 			}).Error(`Failed to find message type `)
 		}
 
 		// Update Job Status
-		job, errr := w.job.GetRecord(message.GetService(), message.GetJob())
+		job, errr := w.job.GetRecord(message.ServiceID, message.JobID)
 
 		if errr != nil {
 			log.WithFields(log.Fields{
-				"correlation_id": message.GetCorrelation(),
+				"correlation_id": message.CorrelationID,
 				"error":          errr.Error(),
 			}).Error(`Worker failed to find the async job`)
 			continue
@@ -256,7 +260,7 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 			job.Status = model.FailedStatus
 
 			log.WithFields(log.Fields{
-				"correlation_id": message.GetCorrelation(),
+				"correlation_id": message.CorrelationID,
 				"message":        message,
 				"error":          err.Error(),
 			}).Error(`Worker failed to process message`)
@@ -265,7 +269,7 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 		w.job.UpdateRecord(*job)
 
 		log.WithFields(log.Fields{
-			"correlation_id": message.GetCorrelation(),
+			"correlation_id": message.CorrelationID,
 			"message":        message,
 		}).Info(`Worker finished processing the message`)
 
@@ -278,21 +282,20 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 // Finalize finalizes a request
 func (w *Workers) Finalize(notifyChannel <-chan Message) {
 	for message := range notifyChannel {
-		switch message.GetType() {
+		switch message.Type {
 		case "DeployRequest":
 			w.service.CreateRecord(model.ServiceRecord{
-				ID:          message.GetService(),
-				Template:    message.(DeployRequest).Template,
-				Configs:     message.(DeployRequest).Configs,
-				DeleteAfter: message.(DeployRequest).DeleteAfter,
+				ID:          message.ServiceID,
+				Service:     message.Service,
+				Configs:     message.Configs,
+				DeleteAfter: message.DeleteAfter,
 			})
 		case "DestroyRequest":
-			// Delete service if no error raised
-			w.service.DeleteRecord(message.GetService())
+			w.service.DeleteRecord(message.ServiceID)
 		}
 
 		log.WithFields(log.Fields{
-			"correlation_id": message.GetCorrelation(),
+			"correlation_id": message.CorrelationID,
 			"message":        message,
 		}).Info(`Worker finalize processing`)
 	}

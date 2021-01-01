@@ -4,17 +4,8 @@
 
 package runtime
 
-import (
-	"github.com/clivern/peanut/core/model"
-)
-
-const (
-	// RedisDockerImage constant
-	RedisDockerImage = "bitnami/redis:6.2.4"
-)
-
 // Containerization interface
 type Containerization interface {
-	Deploy(service model.ServiceRecord) (map[string]string, error)
-	Destroy(service model.ServiceRecord) error
+	Deploy(serviceID, service string, configs map[string]string) (map[string]string, error)
+	Destroy(serviceID, service string, configs map[string]string) error
 }

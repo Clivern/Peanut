@@ -23,69 +23,71 @@ type DockerCompose struct {
 // NewDockerCompose creates a new instance
 func NewDockerCompose() *DockerCompose {
 	instance := new(DockerCompose)
+
 	return instance
 }
 
 // Deploy deploys services
-func (d *DockerCompose) Deploy(service model.ServiceRecord) (map[string]string, error) {
-	data := make(map[string]string)
+func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]string) (map[string]string, error) {
+	var def definition.DockerComposeConfig
+	var err error
 
-	// Deploy redis service
-	if model.RedisService == service.Template {
-		return d.deployRedis(service)
+	dynamicConfigs := make(map[string]string)
+
+	// Deploy Redis
+	if model.RedisService == service {
+		def = definition.GetRedisConfig(serviceID, util.GetVal(configs, "password", ""))
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.RedisPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
-	return data, fmt.Errorf("Error! Undefined service")
+	return dynamicConfigs, nil
 }
 
 // Destroy destroys services
-func (d *DockerCompose) Destroy(service model.ServiceRecord) error {
-	if model.RedisService == service.Template {
-		return d.destroyRedis(service)
+func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]string) error {
+	var def definition.DockerComposeConfig
+
+	// Get Redis Definition
+	if model.RedisService == service {
+		def = definition.GetRedisConfig(serviceID, util.GetVal(configs, "password", ""))
 	}
 
-	return nil
+	return d.destroyService(serviceID, def)
 }
 
-// deployRedis deploys a redis
-func (d *DockerCompose) deployRedis(service model.ServiceRecord) (map[string]string, error) {
-	data := make(map[string]string)
-
-	if service.Configs != nil {
-		data = service.Configs
-	}
-
-	data["address"] = "[NodeIp]"
-	data["password"] = service.GetConfig("password", "")
-
-	redis := definition.GetRedisConfig(
-		service.ID,
-		service.GetConfig("image", RedisDockerImage),
-		definition.RedisPort,
-		service.GetConfig("restartPolicy", "unless-stopped"),
-		data["password"],
-	)
-
-	result, err := redis.ToString()
+// deployService deploys a service
+func (d *DockerCompose) deployService(serviceID string, definition definition.DockerComposeConfig) error {
+	result, err := definition.ToString()
 
 	if err != nil {
-		return data, err
+		return err
 	}
 
 	err = util.StoreFile(
-		fmt.Sprintf("%s/%s.yml", viper.GetString("app.storage.path"), service.ID),
+		fmt.Sprintf("%s/%s.yml", viper.GetString("app.storage.path"), serviceID),
 		result,
 	)
 
 	if err != nil {
-		return data, err
+		return err
 	}
 
 	command := fmt.Sprintf(
 		"docker-compose -f %s/%s.yml -p %s up -d --force-recreate",
 		viper.GetString("app.storage.path"),
-		service.ID,
-		service.ID,
+		serviceID,
+		serviceID,
 	)
 
 	stdout, stderr, err := util.Exec(command)
@@ -95,73 +97,43 @@ func (d *DockerCompose) deployRedis(service model.ServiceRecord) (map[string]str
 	}).Info("Run a shell command")
 
 	if err != nil {
-		return data, err
+		return err
 	}
 
 	// Store runtime verbose logs only in dev environment
 	if viper.GetString("app.mode") == "dev" {
 		err = util.StoreFile(
-			fmt.Sprintf("%s/%s.stdout.log", viper.GetString("app.storage.path"), service.ID),
+			fmt.Sprintf("%s/%s.deploy.stdout.log", viper.GetString("app.storage.path"), serviceID),
 			stdout,
 		)
 
 		if err != nil {
-			return data, err
+			return err
 		}
 
 		err = util.StoreFile(
-			fmt.Sprintf("%s/%s.stderr.log", viper.GetString("app.storage.path"), service.ID),
+			fmt.Sprintf("%s/%s.deploy.stderr.log", viper.GetString("app.storage.path"), serviceID),
 			stderr,
 		)
 
 		if err != nil {
-			return data, err
+			return err
 		}
 	}
 
-	// Fetch the port assigned by docker
-	command = fmt.Sprintf(
-		"docker-compose -f %s/%s.yml -p %s port %s %s",
-		viper.GetString("app.storage.path"),
-		service.ID,
-		service.ID,
-		service.ID,
-		definition.RedisPort,
-	)
-
-	stdout, _, err = util.Exec(command)
-
-	log.WithFields(log.Fields{
-		"command": command,
-	}).Info("Run a shell command")
-
-	if err != nil {
-		return data, err
-	}
-
-	data["port"] = strings.TrimSuffix(strings.Replace(stdout, "0.0.0.0:", "", -1), "\n")
-
-	return data, nil
+	return nil
 }
 
-// destroyRedis destroys redis
-func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
-	redis := definition.GetRedisConfig(
-		service.ID,
-		service.GetConfig("image", RedisDockerImage),
-		definition.RedisPort,
-		service.GetConfig("restartPolicy", "unless-stopped"),
-		service.GetConfig("password", ""),
-	)
-
-	result, err := redis.ToString()
+// destroyService destroys a service
+func (d *DockerCompose) destroyService(serviceID string, definition definition.DockerComposeConfig) error {
+	result, err := definition.ToString()
 
 	if err != nil {
 		return err
 	}
 
 	err = util.StoreFile(
-		fmt.Sprintf("%s/%s.yml", viper.GetString("app.storage.path"), service.ID),
+		fmt.Sprintf("%s/%s.yml", viper.GetString("app.storage.path"), serviceID),
 		result,
 	)
 
@@ -172,8 +144,8 @@ func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
 	command := fmt.Sprintf(
 		"docker-compose -f %s/%s.yml -p %s down -v --remove-orphans",
 		viper.GetString("app.storage.path"),
-		service.ID,
-		service.ID,
+		serviceID,
+		serviceID,
 	)
 
 	stdout, stderr, err := util.Exec(command)
@@ -189,7 +161,7 @@ func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
 	// Store runtime verbose logs only in dev environment
 	if viper.GetString("app.mode") == "dev" {
 		err = util.StoreFile(
-			fmt.Sprintf("%s/%s.stdout.log", viper.GetString("app.storage.path"), service.ID),
+			fmt.Sprintf("%s/%s.destroy.stdout.log", viper.GetString("app.storage.path"), serviceID),
 			stdout,
 		)
 
@@ -198,7 +170,7 @@ func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
 		}
 
 		err = util.StoreFile(
-			fmt.Sprintf("%s/%s.stderr.log", viper.GetString("app.storage.path"), service.ID),
+			fmt.Sprintf("%s/%s.destroy.stderr.log", viper.GetString("app.storage.path"), serviceID),
 			stderr,
 		)
 
@@ -208,4 +180,64 @@ func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
 	}
 
 	return nil
+}
+
+// fetchServicePort get assigned port
+func (d *DockerCompose) fetchServicePort(serviceID string, port string, definition definition.DockerComposeConfig) (string, error) {
+	result, err := definition.ToString()
+
+	if err != nil {
+		return "", err
+	}
+
+	err = util.StoreFile(
+		fmt.Sprintf("%s/%s.yml", viper.GetString("app.storage.path"), serviceID),
+		result,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	command := fmt.Sprintf(
+		"docker-compose -f %s/%s.yml -p %s port %s %s",
+		viper.GetString("app.storage.path"),
+		serviceID,
+		serviceID,
+		serviceID,
+		port,
+	)
+
+	stdout, stderr, err := util.Exec(command)
+
+	log.WithFields(log.Fields{
+		"command": command,
+	}).Info("Run a shell command")
+
+	if err != nil {
+		return "", err
+	}
+
+	// Store runtime verbose logs only in dev environment
+	if viper.GetString("app.mode") == "dev" {
+		err = util.StoreFile(
+			fmt.Sprintf("%s/%s.port_%s.stdout.log", viper.GetString("app.storage.path"), serviceID, port),
+			stdout,
+		)
+
+		if err != nil {
+			return "", err
+		}
+
+		err = util.StoreFile(
+			fmt.Sprintf("%s/%s.port_%s.stderr.log", viper.GetString("app.storage.path"), serviceID, port),
+			stderr,
+		)
+
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return strings.TrimSuffix(strings.Replace(stdout, "0.0.0.0:", "", -1), "\n"), nil
 }

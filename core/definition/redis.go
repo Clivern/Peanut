@@ -11,10 +11,16 @@ import (
 const (
 	// RedisPort const
 	RedisPort = "6379"
+
+	// RedisDockerImage const
+	RedisDockerImage = "bitnami/redis:6.2.4"
+
+	// RedisRestartPolicy const
+	RedisRestartPolicy = "unless-stopped"
 )
 
 // GetRedisConfig gets yaml definition object
-func GetRedisConfig(name, image, port, restart, password string) *DockerComposeConfig {
+func GetRedisConfig(name, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 	volumes := make(map[string]string)
 
@@ -25,15 +31,15 @@ func GetRedisConfig(name, image, port, restart, password string) *DockerComposeC
 	}
 
 	services[name] = Service{
-		Image:   image,
-		Restart: restart,
-		Ports:   []string{port},
+		Image:   RedisDockerImage,
+		Restart: RedisRestartPolicy,
+		Ports:   []string{RedisPort},
 		Environment: []string{
 			envVar1,
 		},
 	}
 
-	return &DockerComposeConfig{
+	return DockerComposeConfig{
 		Version:  "3",
 		Services: services,
 		Volumes:  volumes,

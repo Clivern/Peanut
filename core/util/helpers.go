@@ -224,3 +224,21 @@ func IsEmpty(item string) bool {
 func Rand(min, max int) int {
 	return rand.Intn(max-min) + min
 }
+
+// GetVal gets a value from a hash map
+func GetVal(hash map[string]string, key, def string) string {
+	if val, ok := hash[key]; ok {
+		return val
+	}
+
+	return def
+}
+
+// MergeMaps merges two maps
+func MergeMaps(m1, m2 map[string]string) map[string]string {
+	for k, v := range m2 {
+		m1[k] = v
+	}
+
+	return m1
+}
