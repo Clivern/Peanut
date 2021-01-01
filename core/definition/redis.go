@@ -10,13 +10,11 @@ import (
 
 const (
 	// RedisPort const
-	RedisPort      = "6379"
-	RedisPortStart = 6300
-	RedisPortEnd   = 6400
+	RedisPort = "6379"
 )
 
 // GetRedisConfig gets yaml definition object
-func GetRedisConfig(image, port, restart, password string) *DockerComposeConfig {
+func GetRedisConfig(name, image, port, restart, password string) *DockerComposeConfig {
 	services := make(map[string]Service)
 	volumes := make(map[string]string)
 
@@ -26,12 +24,10 @@ func GetRedisConfig(image, port, restart, password string) *DockerComposeConfig 
 		envVar1 = fmt.Sprintf("REDIS_PASSWORD=%s", password)
 	}
 
-	services["redis"] = Service{
+	services[name] = Service{
 		Image:   image,
 		Restart: restart,
-		Ports: []string{
-			fmt.Sprintf("%s:%s", RedisPort, port),
-		},
+		Ports:   []string{port},
 		Environment: []string{
 			envVar1,
 		},

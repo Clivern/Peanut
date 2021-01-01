@@ -6,7 +6,7 @@ package runtime
 
 import (
 	"fmt"
-	"strconv"
+	"strings"
 
 	"github.com/clivern/peanut/core/definition"
 	"github.com/clivern/peanut/core/model"
@@ -56,16 +56,12 @@ func (d *DockerCompose) deployRedis(service model.ServiceRecord) (map[string]str
 	}
 
 	data["address"] = "[NodeIp]"
-	data["port"] = service.GetConfig("port", strconv.Itoa(util.Rand(
-		definition.RedisPortStart,
-		definition.RedisPortEnd,
-	)))
-
 	data["password"] = service.GetConfig("password", "")
 
 	redis := definition.GetRedisConfig(
+		service.ID,
 		service.GetConfig("image", RedisDockerImage),
-		data["port"],
+		definition.RedisPort,
 		service.GetConfig("restartPolicy", "unless-stopped"),
 		data["password"],
 	)
@@ -122,14 +118,36 @@ func (d *DockerCompose) deployRedis(service model.ServiceRecord) (map[string]str
 		}
 	}
 
+	// Fetch the port assigned by docker
+	command = fmt.Sprintf(
+		"docker-compose -f %s/%s.yml port %s %s",
+		viper.GetString("app.storage.path"),
+		service.ID,
+		service.ID,
+		definition.RedisPort,
+	)
+
+	stdout, _, err = util.Exec(command)
+
+	log.WithFields(log.Fields{
+		"command": command,
+	}).Info("Run a shell command")
+
+	if err != nil {
+		return data, err
+	}
+
+	data["port"] = strings.TrimSuffix(strings.Replace(stdout, "0.0.0.0:", "", -1), "\n")
+
 	return data, nil
 }
 
 // destroyRedis destroys redis
 func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
 	redis := definition.GetRedisConfig(
+		service.ID,
 		service.GetConfig("image", RedisDockerImage),
-		service.GetConfig("port", ""),
+		definition.RedisPort,
 		service.GetConfig("restartPolicy", "unless-stopped"),
 		service.GetConfig("password", ""),
 	)

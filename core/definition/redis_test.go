@@ -17,20 +17,20 @@ func TestUnitRedis(t *testing.T) {
 
 	g.Describe("#TestRedis", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			redis := GetRedisConfig("redis:1.0.0", "1111", "always", "pass")
+			redis := GetRedisConfig("redis", "redis:1.0.0", "6379", "always", "pass")
 			result, err := redis.ToString()
 
 			g.Assert(strings.Contains(result, "image: redis:1.0.0")).Equal(true)
-			g.Assert(strings.Contains(result, "- 6379:1111")).Equal(true)
+			g.Assert(strings.Contains(result, `- "6379"`)).Equal(true)
 			g.Assert(strings.Contains(result, "restart: always")).Equal(true)
 			g.Assert(strings.Contains(result, "REDIS_PASSWORD=pass")).Equal(true)
 			g.Assert(err).Equal(nil)
 
-			redis = GetRedisConfig("redis:1.0.0", "1111", "always", "")
+			redis = GetRedisConfig("redis", "redis:1.0.0", "6379", "always", "")
 			result, err = redis.ToString()
 
 			g.Assert(strings.Contains(result, "image: redis:1.0.0")).Equal(true)
-			g.Assert(strings.Contains(result, "- 6379:1111")).Equal(true)
+			g.Assert(strings.Contains(result, `- "6379"`)).Equal(true)
 			g.Assert(strings.Contains(result, "restart: always")).Equal(true)
 			g.Assert(strings.Contains(result, "ALLOW_EMPTY_PASSWORD=yes")).Equal(true)
 			g.Assert(err).Equal(nil)
