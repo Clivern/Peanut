@@ -82,8 +82,9 @@ func (d *DockerCompose) deployRedis(service model.ServiceRecord) (map[string]str
 	}
 
 	command := fmt.Sprintf(
-		"docker-compose -f %s/%s.yml up -d --force-recreate",
+		"docker-compose -f %s/%s.yml -p %s up -d --force-recreate",
 		viper.GetString("app.storage.path"),
+		service.ID,
 		service.ID,
 	)
 
@@ -120,8 +121,9 @@ func (d *DockerCompose) deployRedis(service model.ServiceRecord) (map[string]str
 
 	// Fetch the port assigned by docker
 	command = fmt.Sprintf(
-		"docker-compose -f %s/%s.yml port %s %s",
+		"docker-compose -f %s/%s.yml -p %s port %s %s",
 		viper.GetString("app.storage.path"),
+		service.ID,
 		service.ID,
 		service.ID,
 		definition.RedisPort,
@@ -168,8 +170,9 @@ func (d *DockerCompose) destroyRedis(service model.ServiceRecord) error {
 	}
 
 	command := fmt.Sprintf(
-		"docker-compose -f %s/%s.yml down --rmi all --remove-orphans",
+		"docker-compose -f %s/%s.yml -p %s down -v --remove-orphans",
 		viper.GetString("app.storage.path"),
+		service.ID,
 		service.ID,
 	)
 
