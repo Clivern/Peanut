@@ -43,7 +43,7 @@ Technically you can achieve the same with a bunch of `YAML` files or using a con
 
 ### Run Peanut on Ubuntu
 
-To Run Peanut on Ubunut, You can use the following bash script. It will install `etcd`, `docker`, `docker-compose` and `peanut`
+To Run Peanut on Ubuntu, You can use the following bash script. It will install `etcd`, `docker`, `docker-compose` and `peanut`
 
 ```zsh
 $ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/ubuntu_20_04.sh)
