@@ -1,7 +1,7 @@
 <p align="center">
     <img src="/assets/logo.png" width="240" />
     <h3 align="center">Peanut</h3>
-    <p align="center">A Tool to Provision Databases and Services Easily for Development and Testing.</p>
+    <p align="center">A Tool to Provision Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
         <a href="https://github.com/Clivern/Peanut/actions/workflows/build.yml">
             <img src="https://github.com/Clivern/Peanut/actions/workflows/build.yml/badge.svg">
@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.15-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.16-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.15">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.16">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -27,8 +27,12 @@
     </p>
 </p>
 <br/>
+<p align="center">
+    <img src="/assets/chart.png?v=0.1.16" width="80%" />
+</p>
 
-Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like `SQL`, `NoSQL`, `message brokers`, `graphing`, `time series databases` ... etc. It perfectly suited for developmenet, manual and automated testing pipelines.
+
+Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like `SQL`, `NoSQL`, `message brokers`, `graphing`, `time series databases` ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines and test drives.
 
 Under the hood, it works with the containerization runtime like `docker` to deploy and configure the service. Destroy the service if it is a temporary one.
 
@@ -37,7 +41,84 @@ Technically you can achieve the same with a bunch of `YAML` files or using a con
 
 ## Documentation
 
-### Linux Deployment
+### Run Peanut on Ubuntu
+
+To Run Peanut on Ubunut, You can use the following bash script. It will install `etcd`, `docker`, `docker-compose` and `peanut`
+
+```zsh
+$ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/ubuntu_20_04.sh)
+
+# Get The Public IP
+$ curl https://ipinfo.io/ip
+X.X.X.X
+```
+
+Peanut will be running on `8000` port by default and UI on this URL `http://X.X.X.X:8000`. Please open this file `/etc/peanut/config.dist.yml` and adjust the following line to be your `Public IP` or `hostname`
+
+```zsh
+# App configs
+app:
+    ...
+    # Hostname
+    hostname: ${PEANUT_API_HOSTNAME:-127.0.0.1}
+```
+
+Then Restart Peanut
+
+```zsh
+$ systemctl restart peanut
+```
+
+To make sure peanut is running, Run the following from your laptop to run some redis instances for 10 minutes.
+
+```zsh
+# To provision redis services for 10 minutes
+$ curl -X POST http://$PUBLIC_IP:8000/api/v1/service -d '{"service":"redis","configs": {},"deleteAfter":"10min"}' -H 'x-api-key:6c68b836-6f8e-465e-b59f-89c1db53afca'
+
+{
+  "createdAt": "2021-07-11T09:58:11.076Z",
+  "id": "aadd5741-58c5-43c7-94fd-e6c0171fe8be",
+  "service": "a8138f52-3ebb-4a34-b403-1be6ad481daf",
+  "status": "PENDING",
+  "type": "service.deploy"
+}
+
+
+# To list services including the host and port to use for connection
+$ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key:6c68b836-6f8e-465e-b59f-89c1db53afca'
+
+{
+  "services": [
+    {
+      "id": "9d655cbe-caf1-4104-b8e4-b83fd569b509",
+      "service": "redis",
+      "configs": {
+        "address": "161.35.82.11",
+        "password": "",
+        "port": "49156"
+      },
+      "deleteAfter": "10min",
+      "createdAt": "2021-07-11T09:58:13Z",
+      "updatedAt": "2021-07-11T09:58:13Z"
+    },
+    {
+      "id": "a8138f52-3ebb-4a34-b403-1be6ad481daf",
+      "service": "redis",
+      "configs": {
+        "address": "161.35.82.11",
+        "password": "",
+        "port": "49155"
+      },
+      "deleteAfter": "",
+      "createdAt": "2021-07-11T09:58:12Z",
+      "updatedAt": "2021-07-11T09:58:12Z"
+    }
+  ]
+}
+```
+
+
+### Linux Deployment Explained
 
 Download [the latest peanut binary](https://github.com/Clivern/Peanut/releases). Make it executable from everywhere.
 
