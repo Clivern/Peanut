@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.16-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.17-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.16">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.17">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -93,7 +93,7 @@ $ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key:6c68b836-6f8e
       "id": "9d655cbe-caf1-4104-b8e4-b83fd569b509",
       "service": "redis",
       "configs": {
-        "address": "161.35.82.11",
+        "address": "127.0.0.1",
         "password": "",
         "port": "49156"
       },
@@ -105,7 +105,7 @@ $ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key:6c68b836-6f8e
       "id": "a8138f52-3ebb-4a34-b403-1be6ad481daf",
       "service": "redis",
       "configs": {
-        "address": "161.35.82.11",
+        "address": "127.0.0.2",
         "password": "",
         "port": "49155"
       },
