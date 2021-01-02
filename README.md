@@ -42,7 +42,7 @@ Technically you can achieve the same with a bunch of yaml files or using a confi
 
 ### Run Peanut on Ubuntu
 
-To run peanut on ubuntu, You can use the following bash script. it may take a while for a cold start. the script will install etcd, docker, docker-compose and peanut.
+To run peanut on ubuntu, You can use the following bash script since it may take a while for a cold start. the script will install etcd, docker, docker-compose and peanut.
 
 ```zsh
 $ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/ubuntu_20_04.sh)

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+   elasticsearch:
+      image: 'docker.elastic.co/elasticsearch/elasticsearch:7.13.3'
+      environment:
+         - discovery.type=single-node
+      ports:
+         - '9200'
+         - '9300'
+      restart: unless-stopped

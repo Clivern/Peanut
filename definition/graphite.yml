@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+   graphite:
+      image: 'graphiteapp/graphite-statsd:1.1.7-11'
+      ports:
+         - '80'
+         - '2003-2004'
+         - '2023-2024'
+         - '8125'
+         - '8126'
+      restart: unless-stopped
