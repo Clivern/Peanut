@@ -222,10 +222,8 @@ $ peanut api -c /path/to/config.yml
 Deploy your first redis server!
 
 ```zsh
-$ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"template":"REDIS_SERVICE"}' | jq .
+$ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"service":"redis"}' -H 'x-api-key:6c68b836-6f8e-465e-b59f-89c1db53afca'
 ```
-
-**Please not that:** for an easy (not recommended for a production environment) setup on linux, you can use [this bash script](/deployment/linux/ubuntu_20_04.sh).
 
 
 #### To run the Admin Dashboard (Development Only):
