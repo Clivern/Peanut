@@ -31,7 +31,7 @@
     <img src="/assets/chart.png?v=0.1.16" width="80%" />
 </p>
 
-Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like databases, message brokers, graphing tools ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines where mocking is not possible and test drives.
+Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines where mocking is not possible and test drives.
 
 Under the hood, it works with the containerization runtime like docker to deploy and configure the service. Destroy the service if it is a temporary one.
 
