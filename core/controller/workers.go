@@ -5,10 +5,12 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
 
+	"github.com/clivern/peanut/core/definition"
 	"github.com/clivern/peanut/core/driver"
 	"github.com/clivern/peanut/core/model"
 	"github.com/clivern/peanut/core/runtime"
@@ -77,6 +79,22 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"correlationID": c.GetHeader("x-correlation-id"),
 			"errorMessage":  "Error! Invalid request",
+		})
+		return
+	}
+
+	allowed := []string{
+		definition.RedisService,
+		definition.EtcdService,
+		definition.GrafanaService,
+		definition.MariaDBService,
+		definition.MySQLService,
+	}
+
+	if !util.InArray(message.Service, allowed) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  fmt.Sprintf("Error! Invalid service provided: %s", message.Service),
 		})
 		return
 	}
