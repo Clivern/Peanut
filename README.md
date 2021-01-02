@@ -31,11 +31,11 @@
     <img src="/assets/chart.png?v=0.1.16" width="80%" />
 </p>
 
-Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like `SQL`, `NoSQL`, `message brokers`, `graphing`, `time series databases` ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines and test drives.
+Peanut provides an API and a command line tool to deploy and configure the commonly used databases and services like databases, message brokers, graphing tools ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines where mocking is not possible and test drives.
 
-Under the hood, it works with the containerization runtime like `docker` to deploy and configure the service. Destroy the service if it is a temporary one.
+Under the hood, it works with the containerization runtime like docker to deploy and configure the service. Destroy the service if it is a temporary one.
 
-Technically you can achieve the same with a bunch of `YAML` files or using a configuration management tool or a package manager like `helm` but peanut is pretty small and fun to use & should spead up your workflow!
+Technically you can achieve the same with a bunch of yaml files or using a configuration management tool or a package manager like helm but peanut is pretty small and fun to use & should spead up your workflow!
 
 
 ## Documentation
@@ -225,7 +225,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"service":"redis"}' -H 
 ```
 
 
-#### To run the Admin Dashboard (Development Only):
+### To run the Admin Dashboard (Development Only):
 
 Clone the project or your own fork:
 
@@ -270,12 +270,12 @@ $ go get github.com/markbates/pkger/cmd/pkger
 $ make package
 ```
 
-## The command line tool
+### The command line tool
 
 In order to interact with peanut API server, you can either do basic API calls or use the provided command line tool. It is still not finished yet but it will be ready soon.
 
 
-## Supported Services
+### Supported Services
 
 Here is a list of all supported services so far and the API call to deploy them.
 
