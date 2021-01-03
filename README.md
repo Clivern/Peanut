@@ -1,7 +1,7 @@
 <p align="center">
     <img src="/assets/logo.png" width="240" />
     <h3 align="center">Peanut</h3>
-    <p align="center">A Tool to Provision Databases and Services Easily for Development and Testing Pipelines.</p>
+    <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
         <a href="https://github.com/Clivern/Peanut/actions/workflows/build.yml">
             <img src="https://github.com/Clivern/Peanut/actions/workflows/build.yml/badge.svg">
