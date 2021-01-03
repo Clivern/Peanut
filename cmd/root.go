@@ -15,7 +15,7 @@ var config string
 
 var rootCmd = &cobra.Command{
 	Use: "peanut",
-	Short: `🔥 Provision Databases and Services for Development and Testing
+	Short: `🐺 Deploy Databases and Services Easily for Development and Testing Pipelines
 
 If you have any suggestions, bug reports, or annoyances please report
 them to our issue tracker at <https://github.com/clivern/peanut/issues>`,
