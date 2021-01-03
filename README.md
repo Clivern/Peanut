@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="/assets/logo.png" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.1.20" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -28,7 +28,7 @@
 </p>
 <br/>
 <p align="center">
-    <img src="/assets/chart.png?v=0.1.16" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.20" width="80%" />
 </p>
 
 Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines where mocking is not possible and test drives.
