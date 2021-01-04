@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.1.24" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=v0.1.24" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -13,7 +13,7 @@
             <img src="https://img.shields.io/badge/Version-0.1.24-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.24">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=v0.1.24">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -25,7 +25,7 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.24" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=v0.1.24" width="80%" />
 </p>
 
 Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for development, manual testing, automated testing pipelines where mocking is not possible and test drives.
