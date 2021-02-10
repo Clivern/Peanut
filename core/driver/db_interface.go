@@ -5,7 +5,7 @@
 package driver
 
 import (
-	"go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/client/v3"
 )
 
 // Database interface

@@ -5,6 +5,7 @@
 package cmd
 
 import (
+	"embed"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -20,6 +21,8 @@ var (
 	// BuiltBy buildinfo item
 	BuiltBy = "unknown"
 )
+
+var Static embed.FS
 
 var versionCmd = &cobra.Command{
 	Use:   "version",

@@ -17,7 +17,7 @@ function docker_compose {
 function etcd {
     echo "Installing etcd ..."
 
-    ETCD_VER=v3.4.14
+    ETCD_VER=v3.5.4
 
     GOOGLE_URL=https://storage.googleapis.com/etcd
     GITHUB_URL=https://github.com/etcd-io/etcd/releases/download

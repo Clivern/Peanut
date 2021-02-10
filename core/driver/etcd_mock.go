@@ -6,7 +6,7 @@ package driver
 
 import (
 	"github.com/stretchr/testify/mock"
-	"go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/client/v3"
 )
 
 // EtcdMock type
