@@ -119,7 +119,7 @@ serve_ui:
 .PHONY: build_ui
 build_ui:
 	@echo ">> ============= Build Vuejs App ============= <<"
-	cd web;$(npm) run build
+	cd web;$(npm) install;$(npm) run build
 
 
 ## check_ui_format: Check dashboard code format
