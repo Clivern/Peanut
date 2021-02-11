@@ -3,11 +3,11 @@
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
-        <a href="https://github.com/Clivern/Peanut/actions/workflows/api_lgtm.yml">
-            <img src="https://github.com/Clivern/Peanut/actions/workflows/api_lgtm.yml/badge.svg">
+        <a href="https://github.com/Clivern/Peanut/actions/workflows/api.yml">
+            <img src="https://github.com/Clivern/Peanut/actions/workflows/api.yml/badge.svg">
         </a>
-        <a href="https://github.com/Clivern/Peanut/actions/workflows/ui_lgtm.yml">
-            <img src="https://github.com/Clivern/Peanut/actions/workflows/ui_lgtm.yml/badge.svg">
+        <a href="https://github.com/Clivern/Peanut/actions/workflows/ui.yml">
+            <img src="https://github.com/Clivern/Peanut/actions/workflows/ui.yml/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/actions">
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
