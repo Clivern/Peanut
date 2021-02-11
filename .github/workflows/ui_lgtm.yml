@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         node-version: [15.x, 18.x]
@@ -27,5 +28,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Run Build UI
+      - name: Install vuejs cli
+        run: npm install -g @vue/cli@5.0.4
+
+      - name: Run build ui
         run: make build_ui
