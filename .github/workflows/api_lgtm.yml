@@ -1,4 +1,4 @@
-name: LGTM
+name: API LGTM
 
 on:
   push:
