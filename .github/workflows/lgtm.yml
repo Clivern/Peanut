@@ -1,4 +1,4 @@
-name: Build
+name: LGTM
 
 on:
   push:
