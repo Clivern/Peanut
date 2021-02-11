@@ -6,6 +6,9 @@
         <a href="https://github.com/Clivern/Peanut/actions/workflows/api_lgtm.yml">
             <img src="https://github.com/Clivern/Peanut/actions/workflows/api_lgtm.yml/badge.svg">
         </a>
+        <a href="https://github.com/Clivern/Peanut/actions/workflows/ui_lgtm.yml">
+            <img src="https://github.com/Clivern/Peanut/actions/workflows/ui_lgtm.yml/badge.svg">
+        </a>
         <a href="https://github.com/Clivern/Peanut/actions">
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
