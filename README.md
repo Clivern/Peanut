@@ -1,19 +1,22 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.4.3" width="240" />
+    <img src="/static/logo.png?v=0.5.0" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
-        <a href="https://github.com/Clivern/Peanut/actions/workflows/build.yml">
-            <img src="https://github.com/Clivern/Peanut/actions/workflows/build.yml/badge.svg">
+        <a href="https://github.com/Clivern/Peanut/actions/workflows/api.yml">
+            <img src="https://github.com/Clivern/Peanut/actions/workflows/api.yml/badge.svg">
+        </a>
+        <a href="https://github.com/Clivern/Peanut/actions/workflows/ui.yml">
+            <img src="https://github.com/Clivern/Peanut/actions/workflows/ui.yml/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/actions">
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.4.3-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.5.0-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.4.3">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.5.0">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -25,15 +28,15 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.4.3" width="80%" />
+    <img src="/static/chart.png?v=0.5.0" width="80%" />
 </p>
 <p align="center">
     <h4 align="center">Dashboard Screenshots</h4>
     <p align="center">
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_01.png?v=0.4.3" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_02.png?v=0.4.3" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_03.png?v=0.4.3" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_04.png?v=0.4.3" width="90%" />
+        <img src="/static/screenshot_01.png?v=0.5.0" width="90%" />
+        <img src="/static/screenshot_02.png?v=0.5.0" width="90%" />
+        <img src="/static/screenshot_03.png?v=0.5.0" width="90%" />
+        <img src="/static/screenshot_04.png?v=0.5.0" width="90%" />
     </p>
 </p>
 
@@ -310,11 +313,10 @@ $ make serve_ui
 # Build Vuejs app
 $ make build_ui
 
-# Any changes to the dashboard, must be reflected to cmd/pkged.go
-# You can use these commands to do so
-$ go get github.com/markbates/pkger/cmd/pkger
+# Build the Vuejs app
 $ make package
 ```
+
 
 #### The command line tool
 

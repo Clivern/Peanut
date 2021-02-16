@@ -243,6 +243,8 @@
 
 <script>
 export default {
+	name: "ServicesPage",
+
 	data() {
 		return {
 			data: [],
@@ -289,6 +291,7 @@ export default {
 			if (this.useTransition) {
 				return "fade";
 			}
+			return "";
 		},
 	},
 	methods: {

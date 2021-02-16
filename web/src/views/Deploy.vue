@@ -226,7 +226,7 @@
 
 <script>
 export default {
-	name: "deploy",
+	name: "DeployPage",
 	data() {
 		return {
 			form: {

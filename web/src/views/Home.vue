@@ -39,7 +39,7 @@ a {
 
 <script>
 export default {
-	name: "home",
+	name: "HomePage",
 
 	data() {
 		return {};
