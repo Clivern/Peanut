@@ -26,10 +26,16 @@ const (
 
 	// GrafanaDefaultPassword const
 	GrafanaDefaultPassword = "admin"
+
+	// GrafanaDefaultAnonymousAccess const
+	GrafanaDefaultAnonymousAccess = "true"
+
+	// GrafanaDefaultAllowSignup const
+	GrafanaDefaultAllowSignup = "false"
 )
 
 // GetGrafanaConfig gets yaml definition object
-func GetGrafanaConfig(name, username, password string) DockerComposeConfig {
+func GetGrafanaConfig(name, username, password, allowSignup, anonymousAccess string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	if username == "" {
@@ -40,6 +46,14 @@ func GetGrafanaConfig(name, username, password string) DockerComposeConfig {
 		password = GrafanaDefaultPassword
 	}
 
+	if allowSignup == "" {
+		allowSignup = GrafanaDefaultAllowSignup
+	}
+
+	if anonymousAccess == "" {
+		anonymousAccess = GrafanaDefaultAnonymousAccess
+	}
+
 	services[name] = Service{
 		Image:   GrafanaDockerImage,
 		Restart: GrafanaRestartPolicy,
@@ -47,7 +61,8 @@ func GetGrafanaConfig(name, username, password string) DockerComposeConfig {
 		Environment: []string{
 			fmt.Sprintf("GF_SECURITY_ADMIN_USER=%s", username),
 			fmt.Sprintf("GF_SECURITY_ADMIN_PASSWORD=%s", password),
-			"GF_USERS_ALLOW_SIGN_UP=false",
+			fmt.Sprintf("GF_USERS_ALLOW_SIGN_UP=%s", allowSignup),
+			fmt.Sprintf("GF_AUTH_ANONYMOUS_ENABLED=%s", anonymousAccess),
 		},
 	}
 

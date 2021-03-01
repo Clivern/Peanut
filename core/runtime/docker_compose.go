@@ -71,8 +71,16 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		// Deploy Grafana
 		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.GrafanaDefaultUsername)
 		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.GrafanaDefaultPassword)
+		dynamicConfigs["anonymousAccess"] = util.GetVal(configs, "anonymousAccess", definition.GrafanaDefaultAnonymousAccess)
+		dynamicConfigs["allowSignup"] = util.GetVal(configs, "allowSignup", definition.GrafanaDefaultAllowSignup)
 
-		def = definition.GetGrafanaConfig(serviceID, dynamicConfigs["username"], dynamicConfigs["password"])
+		def = definition.GetGrafanaConfig(
+			serviceID,
+			dynamicConfigs["username"],
+			dynamicConfigs["password"],
+			dynamicConfigs["allowSignup"],
+			dynamicConfigs["anonymousAccess"],
+		)
 
 		err = d.deployService(serviceID, def)
 
@@ -493,6 +501,8 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 			serviceID,
 			util.GetVal(configs, "username", definition.GrafanaDefaultUsername),
 			util.GetVal(configs, "password", definition.GrafanaDefaultPassword),
+			util.GetVal(configs, "allowSignup", definition.GrafanaDefaultAllowSignup),
+			util.GetVal(configs, "anonymousAccess", definition.GrafanaDefaultAnonymousAccess),
 		)
 
 	} else if definition.MariaDBService == service {

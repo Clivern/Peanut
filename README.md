@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=v0.1.24" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.2.0" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.24-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.2.0-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=v0.1.24">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.2.0">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -25,10 +25,20 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=v0.1.24" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.2.0" width="80%" />
+</p>
+<p align="center">
+    <h4 align="center">Dashboard Screenshots</h4>
+    <p align="center">
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_01.png?v=0.2.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_02.png?v=0.2.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_03.png?v=0.2.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_04.png?v=0.2.0" width="90%" />
+    </p>
 </p>
 
-Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for development, manual testing, automated testing pipelines where mocking is not possible and test drives.
+
+Peanut provides a REST API, Admin Dashboard and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing, tracing, caching tools ... etc. It perfectly suited for development, manual testing, automated testing pipelines where mocking is not possible and test drives.
 
 Under the hood, it works with the containerization runtime like docker to deploy and configure the service. Destroy the service if it is a temporary one.
 
@@ -267,7 +277,7 @@ $ cd web
 $ npm install
 $ npm install -g npx
 
-# Add tower url to frontend
+# Add api server url to frontend
 $ echo "VUE_APP_API_URL=http://127.0.0.1:8000" > .env
 
 $ cd ..
@@ -343,7 +353,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
-    -d '{"service":"grafana","configs": {"username": "admin", "password": "admin"}}' \
+    -d '{"service":"grafana","configs": {"username": "admin", "password": "admin", "allowSignup": "false", "anonymousAccess": "true"}}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 

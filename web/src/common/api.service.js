@@ -13,21 +13,9 @@ const ApiService = {
 		return apiURL + endpoint;
 	},
 
-	getHeaders() {
-		let apiKey = "";
-		let email = "";
-		let id = "";
-
-		if (localStorage.getItem("user_api_key") != null) {
-			apiKey = localStorage.getItem("user_api_key");
-		}
-
-		if (localStorage.getItem("user_email") != null) {
-			email = localStorage.getItem("user_email");
-		}
-
-		if (localStorage.getItem("user_id") != null) {
-			id = localStorage.getItem("user_id");
+	getHeaders(apiKey = "") {
+		if (localStorage.getItem("x_api_key") != null) {
+			apiKey = localStorage.getItem("x_api_key");
 		}
 
 		return {
@@ -35,8 +23,6 @@ const ApiService = {
 
 			headers: {
 				"X-API-Key": apiKey,
-				"X-User-Email": email,
-				"X-User-ID": id,
 				"X-Client-ID": "dashboard",
 				"X-Requested-With": "XMLHttpRequest",
 				"Content-Type": "application/json",
@@ -44,20 +30,20 @@ const ApiService = {
 		};
 	},
 
-	get(endpoint) {
-		return axios.get(this.getURL(endpoint), this.getHeaders());
+	get(endpoint, apiKey = "") {
+		return axios.get(this.getURL(endpoint), this.getHeaders(apiKey));
 	},
 
-	delete(endpoint) {
-		return axios.delete(this.getURL(endpoint), this.getHeaders());
+	delete(endpoint, apiKey = "") {
+		return axios.delete(this.getURL(endpoint), this.getHeaders(apiKey));
 	},
 
-	post(endpoint, data = {}) {
-		return axios.post(this.getURL(endpoint), data, this.getHeaders());
+	post(endpoint, data = {}, apiKey = "") {
+		return axios.post(this.getURL(endpoint), data, this.getHeaders(apiKey));
 	},
 
-	put(endpoint, data = {}) {
-		return axios.put(this.getURL(endpoint), data, this.getHeaders());
+	put(endpoint, data = {}, apiKey = "") {
+		return axios.put(this.getURL(endpoint), data, this.getHeaders(apiKey));
 	},
 };
 

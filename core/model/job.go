@@ -18,13 +18,13 @@ import (
 
 const (
 	// PendingStatus constant
-	PendingStatus = "@pending"
+	PendingStatus = "PENDING"
 
 	// FailedStatus constant
-	FailedStatus = "@failed"
+	FailedStatus = "FAILED"
 
 	// SuccessStatus constant
-	SuccessStatus = "@success"
+	SuccessStatus = "SUCCESS"
 
 	// DeployJob constant
 	DeployJob = "@deployService"

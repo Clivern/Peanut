@@ -155,7 +155,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		"id":        message.JobID,
 		"service":   message.ServiceID,
 		"type":      "service.deploy",
-		"status":    "PENDING",
+		"status":    model.PendingStatus,
 		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
 	})
 }
@@ -220,7 +220,7 @@ func (w *Workers) DestroyRequest(c *gin.Context) {
 		"id":        message.JobID,
 		"service":   message.ServiceID,
 		"type":      "service.destroy",
-		"status":    "PENDING",
+		"status":    model.PendingStatus,
 		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
 	})
 }

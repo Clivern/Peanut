@@ -42,17 +42,13 @@ export default {
 	name: "home",
 
 	data() {
-		return {
-
-		};
+		return {};
 	},
 
-	methods: {
-
-	},
+	methods: {},
 
 	mounted() {
-
+		this.$emit("refresh-state");
 	},
 };
 </script>

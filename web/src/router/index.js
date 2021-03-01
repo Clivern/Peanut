@@ -15,6 +15,30 @@ const routes = [
 		},
 	},
 	{
+		path: "/login",
+		name: "Login",
+		component: () => import("../views/Login.vue"),
+		meta: {
+			requiresAuth: false,
+		},
+	},
+	{
+		path: "/deploy",
+		name: "Deploy",
+		component: () => import("../views/Deploy.vue"),
+		meta: {
+			requiresAuth: true,
+		},
+	},
+	{
+		path: "/services",
+		name: "Services",
+		component: () => import("../views/Services.vue"),
+		meta: {
+			requiresAuth: true,
+		},
+	},
+	{
 		path: "/404",
 		name: "NotFound",
 		component: () => import("../views/NotFound.vue"),
@@ -32,14 +56,14 @@ const router = new VueRouter({
 // Auth Middleware
 router.beforeEach((to, from, next) => {
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
-		if (localStorage.getItem("user_api_key") == null) {
+		if (localStorage.getItem("x_api_key") == null) {
 			next({
 				path: "/login",
 				params: { nextUrl: to.fullPath },
 			});
 		}
 	} else if (to.name == "Login") {
-		localStorage.removeItem("user_api_key");
+		localStorage.removeItem("x_api_key");
 	}
 	next();
 });
