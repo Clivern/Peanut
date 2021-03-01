@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/clivern/peanut/core/definition"
-	"github.com/clivern/peanut/core/model"
 	"github.com/clivern/peanut/core/util"
 
 	log "github.com/sirupsen/logrus"
@@ -35,8 +34,8 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 	dynamicConfigs := make(map[string]string)
 
 	// Deploy Redis
-	if model.RedisService == service {
-		dynamicConfigs["password"] = util.GetVal(configs, "password", "")
+	if definition.RedisService == service {
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.RedisDefaultPassword)
 
 		def = definition.GetRedisConfig(serviceID, dynamicConfigs["password"])
 
@@ -51,6 +50,95 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		if err != nil {
 			return dynamicConfigs, err
 		}
+
+		// Deploy Etcd
+	} else if definition.EtcdService == service {
+		def = definition.GetEtcdConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.EtcdPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		// Deploy Grafana
+	} else if definition.GrafanaService == service {
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.GrafanaDefaultUsername)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.GrafanaDefaultPassword)
+
+		def = definition.GetGrafanaConfig(serviceID, dynamicConfigs["username"], dynamicConfigs["password"])
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.GrafanaPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		// Deploy MariaDB
+	} else if definition.MariaDBService == service {
+		dynamicConfigs["rootPassword"] = util.GetVal(configs, "rootPassword", definition.MariaDBDefaultRootPassword)
+		dynamicConfigs["database"] = util.GetVal(configs, "database", definition.MariaDBDefaultDatabase)
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MariaDBDefaultUsername)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.MariaDBDefaultPassword)
+
+		def = definition.GetMariaDBConfig(
+			serviceID,
+			dynamicConfigs["rootPassword"],
+			dynamicConfigs["database"],
+			dynamicConfigs["username"],
+			dynamicConfigs["password"],
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.MariaDBPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		// Deploy MySQL
+	} else if definition.MySQLService == service {
+		dynamicConfigs["rootPassword"] = util.GetVal(configs, "rootPassword", definition.MySQLDefaultRootPassword)
+		dynamicConfigs["database"] = util.GetVal(configs, "database", definition.MySQLDefaultDatabase)
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MySQLDefaultUsername)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.MySQLDefaultPassword)
+
+		def = definition.GetMySQLConfig(
+			serviceID,
+			dynamicConfigs["rootPassword"],
+			dynamicConfigs["database"],
+			dynamicConfigs["username"],
+			dynamicConfigs["password"],
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.MySQLPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -60,9 +148,50 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]string) error {
 	var def definition.DockerComposeConfig
 
-	// Get Redis Definition
-	if model.RedisService == service {
-		def = definition.GetRedisConfig(serviceID, util.GetVal(configs, "password", ""))
+	if definition.RedisService == service {
+
+		// Get Redis Definition
+		def = definition.GetRedisConfig(
+			serviceID,
+			util.GetVal(configs, "password", definition.RedisDefaultPassword),
+		)
+
+	} else if definition.EtcdService == service {
+
+		// Get Etcd Definition
+		def = definition.GetEtcdConfig(serviceID)
+
+	} else if definition.GrafanaService == service {
+
+		// Get Grafana Definition
+		def = definition.GetGrafanaConfig(
+			serviceID,
+			util.GetVal(configs, "username", definition.GrafanaDefaultUsername),
+			util.GetVal(configs, "password", definition.GrafanaDefaultPassword),
+		)
+
+	} else if definition.MariaDBService == service {
+
+		// Get MariaDB Definition
+		def = definition.GetMariaDBConfig(
+			serviceID,
+			util.GetVal(configs, "rootPassword", definition.MariaDBDefaultRootPassword),
+			util.GetVal(configs, "database", definition.MariaDBDefaultDatabase),
+			util.GetVal(configs, "username", definition.MariaDBDefaultUsername),
+			util.GetVal(configs, "password", definition.MariaDBDefaultPassword),
+		)
+
+	} else if definition.MySQLService == service {
+
+		// Get MySQL Definition
+		def = definition.GetMySQLConfig(
+			serviceID,
+			util.GetVal(configs, "rootPassword", definition.MySQLDefaultRootPassword),
+			util.GetVal(configs, "database", definition.MySQLDefaultDatabase),
+			util.GetVal(configs, "username", definition.MySQLDefaultUsername),
+			util.GetVal(configs, "password", definition.MySQLDefaultPassword),
+		)
+
 	}
 
 	err := d.destroyService(serviceID, def)

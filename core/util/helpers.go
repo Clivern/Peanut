@@ -228,7 +228,7 @@ func Rand(min, max int) int {
 
 // GetVal gets a value from a hash map
 func GetVal(hash map[string]string, key, def string) string {
-	if val, ok := hash[key]; ok {
+	if val, ok := hash[key]; ok && val != "" {
 		return val
 	}
 

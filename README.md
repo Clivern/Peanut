@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.17-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.18-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.17">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.18">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -269,6 +269,100 @@ $ make build_ui
 # You can use these commands to do so
 $ go get github.com/markbates/pkger/cmd/pkger
 $ make package
+```
+
+## The command line tool
+
+In order to interact with peanut API server, you can either do basic API calls or use the provided command line tool. It is still not finished yet but it will be ready soon.
+
+
+## Supported Services
+
+Here is a list of all supported services so far and the API call to deploy them.
+
+- MySQL
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"mysql","configs": {"rootPassword": "root", "database": "peanut", "username": "peanut", "password": "secret"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- MariaDB
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"mariadb","configs": {"rootPassword": "root", "database": "peanut", "username": "peanut", "password": "secret"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Redis
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"redis","configs": {"password": "secret"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Etcd
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etcd"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Grafana
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etcd","configs": {"username": "admin", "password": "admin"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+To create a temporary service, you will need to add extra parameter while creating it.
+
+```zsh
+# It will be deleted after 30 seconds
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etcd", "deleteAfter": "30sec"}' \
+    -H 'x-api-key: ~api~key~here~'
+
+# It will be deleted after 20 minutes
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etcd", "deleteAfter": "20min"}' \
+    -H 'x-api-key: ~api~key~here~'
+
+# It will be deleted after 1 hour
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etcd", "deleteAfter": "1hours"}' \
+    -H 'x-api-key: ~api~key~here~'
+
+# It will be deleted after 3 days
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etcd", "deleteAfter": "3days"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+To list all services running on a single or multi nodes.
+
+```zsh
+$ curl -X GET http://127.0.0.1:8000/api/v1/service \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+To delete a service.
+
+```zsh
+$ curl -X DELETE http://127.0.0.1:8000/api/v1/service/:serviceId \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+To get async job status like a deployment status.
+
+```zsh
+$ curl -X DELETE http://127.0.0.1:8000/api/v1/job/:serviceId/:jobId \
+    -H 'x-api-key: ~api~key~here~'
 ```
 
 

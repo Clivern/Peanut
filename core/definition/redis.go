@@ -9,6 +9,9 @@ import (
 )
 
 const (
+	// RedisService const
+	RedisService = "redis"
+
 	// RedisPort const
 	RedisPort = "6379"
 
@@ -17,12 +20,14 @@ const (
 
 	// RedisRestartPolicy const
 	RedisRestartPolicy = "unless-stopped"
+
+	// RedisDefaultPassword const
+	RedisDefaultPassword = ""
 )
 
 // GetRedisConfig gets yaml definition object
 func GetRedisConfig(name, password string) DockerComposeConfig {
 	services := make(map[string]Service)
-	volumes := make(map[string]string)
 
 	envVar1 := "ALLOW_EMPTY_PASSWORD=yes"
 
@@ -42,6 +47,5 @@ func GetRedisConfig(name, password string) DockerComposeConfig {
 	return DockerComposeConfig{
 		Version:  "3",
 		Services: services,
-		Volumes:  volumes,
 	}
 }

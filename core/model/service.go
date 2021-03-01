@@ -16,11 +16,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	// RedisService constant
-	RedisService = "redis"
-)
-
 // ServiceRecord type
 type ServiceRecord struct {
 	ID          string            `json:"id"`
