@@ -18,10 +18,10 @@ func TestUnitPrometheus(t *testing.T) {
 
 	g.Describe("#TestPrometheus", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			prometheus := GetPrometheusConfig("prometheus", "/etc/peanut/storage/da2ce8ac-d33f-4dd9-a345-d76f2a4336be.yml")
+			prometheus := GetPrometheusConfig("prometheus", "", "/etc/peanut/storage/da2ce8ac-d33f-4dd9-a345-d76f2a4336be.yml")
 			result, err := prometheus.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", PrometheusDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", PrometheusDockerImage, PrometheusDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, PrometheusPort))).Equal(true)
 			g.Assert(strings.Contains(
 				result,

@@ -16,7 +16,10 @@ const (
 	GrafanaPort = "3000"
 
 	// GrafanaDockerImage const
-	GrafanaDockerImage = "grafana/grafana:8.0.4"
+	GrafanaDockerImage = "grafana/grafana"
+
+	// GrafanaDockerImageVersion const
+	GrafanaDockerImageVersion = "8.0.4"
 
 	// GrafanaRestartPolicy const
 	GrafanaRestartPolicy = "unless-stopped"
@@ -35,7 +38,7 @@ const (
 )
 
 // GetGrafanaConfig gets yaml definition object
-func GetGrafanaConfig(name, username, password, allowSignup, anonymousAccess string) DockerComposeConfig {
+func GetGrafanaConfig(name, version, username, password, allowSignup, anonymousAccess string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	if username == "" {
@@ -54,8 +57,12 @@ func GetGrafanaConfig(name, username, password, allowSignup, anonymousAccess str
 		anonymousAccess = GrafanaDefaultAnonymousAccess
 	}
 
+	if version == "" {
+		version = GrafanaDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   GrafanaDockerImage,
+		Image:   fmt.Sprintf("%s:%s", GrafanaDockerImage, version),
 		Restart: GrafanaRestartPolicy,
 		Ports:   []string{GrafanaPort},
 		Environment: []string{

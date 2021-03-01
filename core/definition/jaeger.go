@@ -4,6 +4,10 @@
 
 package definition
 
+import (
+	"fmt"
+)
+
 const (
 	// JaegerService const
 	JaegerService = "jaeger"
@@ -33,18 +37,25 @@ const (
 	JaegerHTTPPort5 = "9411"
 
 	// JaegerDockerImage const
-	JaegerDockerImage = "jaegertracing/all-in-one:1.24"
+	JaegerDockerImage = "jaegertracing/all-in-one"
+
+	// JaegerDockerImageVersion const
+	JaegerDockerImageVersion = "1.24"
 
 	// JaegerRestartPolicy const
 	JaegerRestartPolicy = "unless-stopped"
 )
 
 // GetJaegerConfig gets yaml definition object
-func GetJaegerConfig(name string) DockerComposeConfig {
+func GetJaegerConfig(name, version string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = JaegerDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   JaegerDockerImage,
+		Image:   fmt.Sprintf("%s:%s", JaegerDockerImage, version),
 		Restart: JaegerRestartPolicy,
 		Ports: []string{
 			JaegerUDPPort1,

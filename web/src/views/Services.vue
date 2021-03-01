@@ -40,6 +40,17 @@
 						</span>
 					</b-table-column>
 
+					<b-table-column
+						field="version"
+						label="Version"
+						centered
+						v-slot="props"
+					>
+						<span class="tag is-success is-light">
+							{{ props.row.version }}
+						</span>
+					</b-table-column>
+
 					<b-table-column field="id" label="UUID" centered v-slot="props">
 						<span class="tag is-warning is-light">{{ props.row.id }}</span>
 					</b-table-column>
@@ -139,6 +150,27 @@
 							>
 							-
 						</template>
+
+						<template v-if="props.row.service == 'consul'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
+
+						<template v-if="props.row.service == 'vault'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
+
 						<b-button
 							size="is-small"
 							type="is-link is-danger is-light"
@@ -190,6 +222,8 @@ export default {
 				mailhog: "Mailhog",
 				jaeger: "Jaeger",
 				rabbitmq: "RabbitMQ",
+				consul: "Consul",
+				vault: "Vault",
 			},
 		};
 	},
@@ -257,6 +291,14 @@ export default {
 				window.open(
 					"//" + data.configs.address + ":" + data.configs.dashboardPort
 				);
+			}
+
+			if (data.service == "consul") {
+				window.open("//" + data.configs.address + ":" + data.configs.httpPort);
+			}
+
+			if (data.service == "vault") {
+				window.open("//" + data.configs.address + ":" + data.configs.httpPort);
 			}
 		},
 		deleteService(serviceId) {

@@ -16,7 +16,10 @@ const (
 	RedisPort = "6379"
 
 	// RedisDockerImage const
-	RedisDockerImage = "bitnami/redis:6.2.4"
+	RedisDockerImage = "bitnami/redis"
+
+	// RedisDockerImageVersion const
+	RedisDockerImageVersion = "6.2.4"
 
 	// RedisRestartPolicy const
 	RedisRestartPolicy = "unless-stopped"
@@ -26,7 +29,7 @@ const (
 )
 
 // GetRedisConfig gets yaml definition object
-func GetRedisConfig(name, password string) DockerComposeConfig {
+func GetRedisConfig(name, version, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	envVar1 := "ALLOW_EMPTY_PASSWORD=yes"
@@ -35,8 +38,12 @@ func GetRedisConfig(name, password string) DockerComposeConfig {
 		envVar1 = fmt.Sprintf("REDIS_PASSWORD=%s", password)
 	}
 
+	if version == "" {
+		version = RedisDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   RedisDockerImage,
+		Image:   fmt.Sprintf("%s:%s", RedisDockerImage, version),
 		Restart: RedisRestartPolicy,
 		Ports:   []string{RedisPort},
 		Environment: []string{

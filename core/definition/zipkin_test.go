@@ -18,10 +18,10 @@ func TestUnitZipkin(t *testing.T) {
 
 	g.Describe("#TestZipkin", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			zipkin := GetZipkinConfig("zipkin")
+			zipkin := GetZipkinConfig("zipkin", "")
 			result, err := zipkin.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", ZipkinDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", ZipkinDockerImage, ZipkinDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, ZipkinPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", ZipkinRestartPolicy))).Equal(true)
 			g.Assert(err).Equal(nil)

@@ -20,6 +20,7 @@ import (
 type ServiceRecord struct {
 	ID          string            `json:"id"`
 	Service     string            `json:"service"`
+	Version     string            `json:"version"`
 	Configs     map[string]string `json:"configs"`
 	DeleteAfter string            `json:"deleteAfter"`
 	CreatedAt   int64             `json:"createdAt"`

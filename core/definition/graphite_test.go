@@ -18,10 +18,10 @@ func TestUnitGraphite(t *testing.T) {
 
 	g.Describe("#TestGraphite", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			graphite := GetGraphiteConfig("graphite")
+			graphite := GetGraphiteConfig("graphite", "")
 			result, err := graphite.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", GraphiteDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", GraphiteDockerImage, GraphiteDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, GraphiteWebPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- %s-%s`, GraphiteCarbonPort, GraphiteCarbonPicklePort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- %s-%s`, GraphiteCarbonAggregatorPort, GraphiteCarbonAggregatorPicklePort))).Equal(true)

@@ -18,10 +18,10 @@ func TestUnitMySQL(t *testing.T) {
 
 	g.Describe("#TestMySQL", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			mysql := GetMySQLConfig("mysql", "mysql1", "mysql2", "mysql3", "mysql4")
+			mysql := GetMySQLConfig("mysql", "", "mysql1", "mysql2", "mysql3", "mysql4")
 			result, err := mysql.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MySQLDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", MySQLDockerImage, MySQLDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MySQLPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MySQLRestartPolicy))).Equal(true)
 			g.Assert(strings.Contains(result, "MYSQL_ALLOW_EMPTY_PASSWORD=no")).Equal(true)
@@ -31,10 +31,10 @@ func TestUnitMySQL(t *testing.T) {
 			g.Assert(strings.Contains(result, "MYSQL_PASSWORD=mysql4")).Equal(true)
 			g.Assert(err).Equal(nil)
 
-			mysql = GetMySQLConfig("mysql", "", "", "", "")
+			mysql = GetMySQLConfig("mysql", "", "", "", "", "")
 			result, err = mysql.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MySQLDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", MySQLDockerImage, MySQLDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MySQLPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MySQLRestartPolicy))).Equal(true)
 			g.Assert(strings.Contains(result, "MYSQL_ALLOW_EMPTY_PASSWORD=no")).Equal(true)

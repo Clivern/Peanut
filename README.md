@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.2.0" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.3.0" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.2.0-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.3.0-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.2.0">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.3.0">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -25,15 +25,15 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.2.0" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.3.0" width="80%" />
 </p>
 <p align="center">
     <h4 align="center">Dashboard Screenshots</h4>
     <p align="center">
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_01.png?v=0.2.0" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_02.png?v=0.2.0" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_03.png?v=0.2.0" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_04.png?v=0.2.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_01.png?v=0.3.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_02.png?v=0.3.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_03.png?v=0.3.0" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_04.png?v=0.3.0" width="90%" />
     </p>
 </p>
 
@@ -42,7 +42,7 @@ Peanut provides a REST API, Admin Dashboard and a command line tool to deploy an
 
 Under the hood, it works with the containerization runtime like docker to deploy and configure the service. Destroy the service if it is a temporary one.
 
-Technically you can achieve the same with a bunch of yaml files or using a configuration management tool or a package manager like helm but peanut is pretty small and fun to use & should spead up your workflow!
+Technically you can achieve the same with a bunch of yaml files or using a configuration management tool or a package manager like helm but peanut is pretty small and fun to use & should speed up your workflow!
 
 Supported Services:
 
@@ -61,6 +61,8 @@ Supported Services:
 - Mailhog.
 - Jaeger.
 - RabbitMQ.
+- Consul.
+- Vault.
 
 
 ## Documentation
@@ -434,6 +436,23 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
+- Consul.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"consul"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Vault.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"vault","configs": {"token": "peanut"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+
 To create a temporary service, you will need to add extra parameter while creating it.
 
 ```zsh
@@ -476,6 +495,16 @@ To get async job status like a deployment status.
 
 ```zsh
 $ curl -X DELETE http://127.0.0.1:8000/api/v1/job/:serviceId/:jobId \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+To get service versions.
+
+```zsh
+$ curl -X GET http://127.0.0.1:8000/api/v1/tag/$serviceType/$fromCacheStatus \
+    -H 'x-api-key: ~api~key~here~'
+
+$ curl -X GET http://127.0.0.1:8000/api/v1/tag/mysql/true \
     -H 'x-api-key: ~api~key~here~'
 ```
 

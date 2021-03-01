@@ -25,6 +25,7 @@ type Service struct {
 	DependsOn   []string `yaml:"depends_on,omitempty"`
 	Ports       []string `yaml:"ports,omitempty"`
 	Restart     string   `yaml:"restart,omitempty"`
+	Command     string   `yaml:"command,omitempty"`
 }
 
 // ToString converts object to a string

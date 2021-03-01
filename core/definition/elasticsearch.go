@@ -4,6 +4,10 @@
 
 package definition
 
+import (
+	"fmt"
+)
+
 const (
 	// ElasticSearchService const
 	ElasticSearchService = "elasticsearch"
@@ -15,18 +19,25 @@ const (
 	ElasticSearchCommunicationPort = "9300"
 
 	// ElasticSearchDockerImage const
-	ElasticSearchDockerImage = "docker.elastic.co/elasticsearch/elasticsearch:7.13.3"
+	ElasticSearchDockerImage = "elasticsearch"
+
+	// ElasticSearchDockerImageVersion const
+	ElasticSearchDockerImageVersion = "7.13.3"
 
 	// ElasticSearchRestartPolicy const
 	ElasticSearchRestartPolicy = "unless-stopped"
 )
 
 // GetElasticSearchConfig gets yaml definition object
-func GetElasticSearchConfig(name string) DockerComposeConfig {
+func GetElasticSearchConfig(name, version string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = ElasticSearchDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   ElasticSearchDockerImage,
+		Image:   fmt.Sprintf("%s:%s", ElasticSearchDockerImage, version),
 		Restart: ElasticSearchRestartPolicy,
 		Ports: []string{
 			ElasticSearchRequestsPort,

@@ -18,10 +18,10 @@ func TestUnitMemcached(t *testing.T) {
 
 	g.Describe("#TestMemcached", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			memcached := GetMemcachedConfig("memcached")
+			memcached := GetMemcachedConfig("memcached", "")
 			result, err := memcached.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MemcachedDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", MemcachedDockerImage, MemcachedDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MemcachedPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MemcachedRestartPolicy))).Equal(true)
 			g.Assert(err).Equal(nil)

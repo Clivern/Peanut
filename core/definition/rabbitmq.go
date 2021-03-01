@@ -4,6 +4,10 @@
 
 package definition
 
+import (
+	"fmt"
+)
+
 const (
 	// RabbitMQService const
 	RabbitMQService = "rabbitmq"
@@ -15,7 +19,10 @@ const (
 	RabbitMQDashboardPort = "15672"
 
 	// RabbitMQDockerImage const
-	RabbitMQDockerImage = "rabbitmq:3.8-management"
+	RabbitMQDockerImage = "rabbitmq"
+
+	// RabbitMQDockerImageVersion const
+	RabbitMQDockerImageVersion = "3.8-management"
 
 	// RabbitMQRestartPolicy const
 	RabbitMQRestartPolicy = "unless-stopped"
@@ -28,11 +35,15 @@ const (
 )
 
 // GetRabbitMQConfig gets yaml definition object
-func GetRabbitMQConfig(name string) DockerComposeConfig {
+func GetRabbitMQConfig(name, version string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = RabbitMQDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   RabbitMQDockerImage,
+		Image:   fmt.Sprintf("%s:%s", RabbitMQDockerImage, version),
 		Restart: RabbitMQRestartPolicy,
 		Ports: []string{
 			RabbitMQAMQPPort,

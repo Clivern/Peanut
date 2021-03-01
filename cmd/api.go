@@ -183,6 +183,7 @@ var towerCmd = &cobra.Command{
 			apiv1.GET("/service", controller.GetServices)
 			apiv1.GET("/service/:serviceId", controller.GetService)
 			apiv1.GET("/job/:serviceId/:jobId", controller.GetJob)
+			apiv1.GET("/tag/:serviceType/:fromCache", controller.GetTags)
 		}
 
 		go workers.Watch()

@@ -16,7 +16,10 @@ const (
 	MySQLPort = "3306"
 
 	// MySQLDockerImage const
-	MySQLDockerImage = "mysql:8.0"
+	MySQLDockerImage = "mysql"
+
+	// MySQLDockerImageVersion const
+	MySQLDockerImageVersion = "8.0"
 
 	// MySQLRestartPolicy const
 	MySQLRestartPolicy = "unless-stopped"
@@ -35,7 +38,7 @@ const (
 )
 
 // GetMySQLConfig gets yaml definition object
-func GetMySQLConfig(name, rootPassword, database, username, password string) DockerComposeConfig {
+func GetMySQLConfig(name, version, rootPassword, database, username, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	if rootPassword == "" {
@@ -54,8 +57,12 @@ func GetMySQLConfig(name, rootPassword, database, username, password string) Doc
 		password = MySQLDefaultPassword
 	}
 
+	if version == "" {
+		version = MySQLDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   MySQLDockerImage,
+		Image:   fmt.Sprintf("%s:%s", MySQLDockerImage, version),
 		Restart: MySQLRestartPolicy,
 		Ports:   []string{MySQLPort},
 		Environment: []string{

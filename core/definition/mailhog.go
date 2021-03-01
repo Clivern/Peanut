@@ -4,6 +4,10 @@
 
 package definition
 
+import (
+	"fmt"
+)
+
 const (
 	// MailhogService const
 	MailhogService = "mailhog"
@@ -15,18 +19,25 @@ const (
 	MailhogHTTPPort = "8025"
 
 	// MailhogDockerImage const
-	MailhogDockerImage = "mailhog/mailhog:v1.0.1"
+	MailhogDockerImage = "mailhog/mailhog"
+
+	// MailhogDockerImageVersion const
+	MailhogDockerImageVersion = "v1.0.1"
 
 	// MailhogRestartPolicy const
 	MailhogRestartPolicy = "unless-stopped"
 )
 
 // GetMailhogConfig gets yaml definition object
-func GetMailhogConfig(name string) DockerComposeConfig {
+func GetMailhogConfig(name, version string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = MailhogDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   MailhogDockerImage,
+		Image:   fmt.Sprintf("%s:%s", MailhogDockerImage, version),
 		Restart: MailhogRestartPolicy,
 		Ports: []string{
 			MailhogSMTPPort,

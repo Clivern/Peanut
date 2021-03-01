@@ -18,10 +18,10 @@ func TestUnitJaeger(t *testing.T) {
 
 	g.Describe("#TestJaeger", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			jaeger := GetJaegerConfig("jaeger")
+			jaeger := GetJaegerConfig("jaeger", "")
 			result, err := jaeger.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", JaegerDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", JaegerDockerImage, JaegerDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, JaegerUDPPort1))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, JaegerUDPPort2))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, JaegerUDPPort3))).Equal(true)

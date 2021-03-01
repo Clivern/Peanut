@@ -4,6 +4,10 @@
 
 package definition
 
+import (
+	"fmt"
+)
+
 const (
 	// ZipkinService const
 	ZipkinService = "zipkin"
@@ -12,18 +16,25 @@ const (
 	ZipkinPort = "9411"
 
 	// ZipkinDockerImage const
-	ZipkinDockerImage = "openzipkin/zipkin:2.23"
+	ZipkinDockerImage = "openzipkin/zipkin"
+
+	// ZipkinDockerImageVersion const
+	ZipkinDockerImageVersion = "2.23"
 
 	// ZipkinRestartPolicy const
 	ZipkinRestartPolicy = "unless-stopped"
 )
 
 // GetZipkinConfig gets yaml definition object
-func GetZipkinConfig(name string) DockerComposeConfig {
+func GetZipkinConfig(name, version string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = ZipkinDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   ZipkinDockerImage,
+		Image:   fmt.Sprintf("%s:%s", ZipkinDockerImage, version),
 		Restart: ZipkinRestartPolicy,
 		Ports:   []string{ZipkinPort},
 	}

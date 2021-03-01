@@ -16,7 +16,10 @@ const (
 	PrometheusPort = "9090"
 
 	// PrometheusDockerImage const
-	PrometheusDockerImage = "prom/prometheus:v2.28.1"
+	PrometheusDockerImage = "prom/prometheus"
+
+	// PrometheusDockerImageVersion const
+	PrometheusDockerImageVersion = "v2.28.1"
 
 	// PrometheusRestartPolicy const
 	PrometheusRestartPolicy = "unless-stopped"
@@ -26,11 +29,15 @@ const (
 )
 
 // GetPrometheusConfig gets yaml definition object
-func GetPrometheusConfig(name, configPath string) DockerComposeConfig {
+func GetPrometheusConfig(name, version, configPath string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = PrometheusDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   PrometheusDockerImage,
+		Image:   fmt.Sprintf("%s:%s", PrometheusDockerImage, version),
 		Restart: PrometheusRestartPolicy,
 		Ports:   []string{PrometheusPort},
 		Volumes: []string{

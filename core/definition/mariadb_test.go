@@ -18,10 +18,10 @@ func TestUnitMariaDB(t *testing.T) {
 
 	g.Describe("#TestMariaDB", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			mariadb := GetMariaDBConfig("mariadb", "mariadb1", "mariadb2", "mariadb3", "mariadb4")
+			mariadb := GetMariaDBConfig("mariadb", "", "mariadb1", "mariadb2", "mariadb3", "mariadb4")
 			result, err := mariadb.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MariaDBDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", MariaDBDockerImage, MariaDBDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MariaDBPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MariaDBRestartPolicy))).Equal(true)
 			g.Assert(strings.Contains(result, "MYSQL_ALLOW_EMPTY_PASSWORD=no")).Equal(true)
@@ -31,10 +31,10 @@ func TestUnitMariaDB(t *testing.T) {
 			g.Assert(strings.Contains(result, "MYSQL_PASSWORD=mariadb4")).Equal(true)
 			g.Assert(err).Equal(nil)
 
-			mariadb = GetMariaDBConfig("mariadb", "", "", "", "")
+			mariadb = GetMariaDBConfig("mariadb", "", "", "", "", "")
 			result, err = mariadb.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MariaDBDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", MariaDBDockerImage, MariaDBDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MariaDBPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MariaDBRestartPolicy))).Equal(true)
 			g.Assert(strings.Contains(result, "MYSQL_ALLOW_EMPTY_PASSWORD=no")).Equal(true)

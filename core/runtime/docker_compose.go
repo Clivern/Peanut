@@ -27,7 +27,7 @@ func NewDockerCompose() *DockerCompose {
 }
 
 // Deploy deploys services
-func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]string) (map[string]string, error) {
+func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[string]string) (map[string]string, error) {
 	var def definition.DockerComposeConfig
 	var err error
 
@@ -37,7 +37,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		// Deploy Redis
 		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.RedisDefaultPassword)
 
-		def = definition.GetRedisConfig(serviceID, dynamicConfigs["password"])
+		def = definition.GetRedisConfig(serviceID, version, dynamicConfigs["password"])
 
 		err = d.deployService(serviceID, def)
 
@@ -53,7 +53,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 	} else if definition.EtcdService == service {
 		// Deploy Etcd
-		def = definition.GetEtcdConfig(serviceID)
+		def = definition.GetEtcdConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -76,6 +76,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 		def = definition.GetGrafanaConfig(
 			serviceID,
+			version,
 			dynamicConfigs["username"],
 			dynamicConfigs["password"],
 			dynamicConfigs["allowSignup"],
@@ -103,6 +104,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 		def = definition.GetMariaDBConfig(
 			serviceID,
+			version,
 			dynamicConfigs["rootPassword"],
 			dynamicConfigs["database"],
 			dynamicConfigs["username"],
@@ -130,6 +132,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 		def = definition.GetMySQLConfig(
 			serviceID,
+			version,
 			dynamicConfigs["rootPassword"],
 			dynamicConfigs["database"],
 			dynamicConfigs["username"],
@@ -155,6 +158,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 		def = definition.GetPostgreSQLConfig(
 			serviceID,
+			version,
 			dynamicConfigs["database"],
 			dynamicConfigs["username"],
 			dynamicConfigs["password"],
@@ -179,6 +183,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 		def = definition.GetMongoDBConfig(
 			serviceID,
+			version,
 			dynamicConfigs["database"],
 			dynamicConfigs["username"],
 			dynamicConfigs["password"],
@@ -197,7 +202,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		}
 	} else if definition.ElasticSearchService == service {
 		// Deploy ElasticSearch
-		def = definition.GetElasticSearchConfig(serviceID)
+		def = definition.GetElasticSearchConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -226,7 +231,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		}
 	} else if definition.GraphiteService == service {
 		// Deploy Graphite
-		def = definition.GetGraphiteConfig(serviceID)
+		def = definition.GetGraphiteConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -326,6 +331,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 		def = definition.GetPrometheusConfig(
 			serviceID,
+			version,
 			fmt.Sprintf("%s/%s.prometheus.yml", util.RemoveTrailingSlash(viper.GetString("app.storage.path")), serviceID),
 		)
 
@@ -342,7 +348,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		)
 	} else if definition.ZipkinService == service {
 		// Deploy Zipkin
-		def = definition.GetZipkinConfig(serviceID)
+		def = definition.GetZipkinConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -358,7 +364,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 	} else if definition.MemcachedService == service {
 		// Deploy Memcached
-		def = definition.GetMemcachedConfig(serviceID)
+		def = definition.GetMemcachedConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -373,7 +379,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		}
 	} else if definition.MailhogService == service {
 		// Deploy Mailhog
-		def = definition.GetMailhogConfig(serviceID)
+		def = definition.GetMailhogConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -395,7 +401,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 	} else if definition.JaegerService == service {
 		// Deploy Jaeger
-		def = definition.GetJaegerConfig(serviceID)
+		def = definition.GetJaegerConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -452,7 +458,7 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		}
 	} else if definition.RabbitMQService == service {
 		// Deploy RabbitMQ
-		def = definition.GetRabbitMQConfig(serviceID)
+		def = definition.GetRabbitMQConfig(serviceID, version)
 
 		err = d.deployService(serviceID, def)
 
@@ -475,30 +481,73 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		if err != nil {
 			return dynamicConfigs, err
 		}
+
+	} else if definition.ConsulService == service {
+		// Deploy Consul
+		def = definition.GetConsulConfig(
+			serviceID,
+			version,
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort"], err = d.fetchServicePort(serviceID, definition.ConsulHTTPPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+	} else if definition.VaultService == service {
+		// Deploy Vault
+		dynamicConfigs["token"] = util.GetVal(configs, "token", definition.VaultDefaultToken)
+
+		def = definition.GetVaultConfig(
+			serviceID,
+			version,
+			dynamicConfigs["token"],
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort"], err = d.fetchServicePort(serviceID, definition.VaultHTTPPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
 }
 
 // Destroy destroys services
-func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]string) error {
+func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[string]string) error {
 	var def definition.DockerComposeConfig
 
 	if definition.RedisService == service {
 		// Get Redis Definition
 		def = definition.GetRedisConfig(
 			serviceID,
+			version,
 			util.GetVal(configs, "password", definition.RedisDefaultPassword),
 		)
 
 	} else if definition.EtcdService == service {
 		// Get Etcd Definition
-		def = definition.GetEtcdConfig(serviceID)
+		def = definition.GetEtcdConfig(serviceID, version)
 
 	} else if definition.GrafanaService == service {
 		// Get Grafana Definition
 		def = definition.GetGrafanaConfig(
 			serviceID,
+			version,
 			util.GetVal(configs, "username", definition.GrafanaDefaultUsername),
 			util.GetVal(configs, "password", definition.GrafanaDefaultPassword),
 			util.GetVal(configs, "allowSignup", definition.GrafanaDefaultAllowSignup),
@@ -509,6 +558,7 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		// Get MariaDB Definition
 		def = definition.GetMariaDBConfig(
 			serviceID,
+			version,
 			util.GetVal(configs, "rootPassword", definition.MariaDBDefaultRootPassword),
 			util.GetVal(configs, "database", definition.MariaDBDefaultDatabase),
 			util.GetVal(configs, "username", definition.MariaDBDefaultUsername),
@@ -519,6 +569,7 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		// Get MySQL Definition
 		def = definition.GetMySQLConfig(
 			serviceID,
+			version,
 			util.GetVal(configs, "rootPassword", definition.MySQLDefaultRootPassword),
 			util.GetVal(configs, "database", definition.MySQLDefaultDatabase),
 			util.GetVal(configs, "username", definition.MySQLDefaultUsername),
@@ -529,6 +580,7 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		// Get PostgreSQL Definition
 		def = definition.GetPostgreSQLConfig(
 			serviceID,
+			version,
 			util.GetVal(configs, "database", definition.PostgreSQLDefaultDatabase),
 			util.GetVal(configs, "username", definition.PostgreSQLDefaultUsername),
 			util.GetVal(configs, "password", definition.PostgreSQLDefaultPassword),
@@ -538,6 +590,7 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		// Get MongoDB Definition
 		def = definition.GetMongoDBConfig(
 			serviceID,
+			version,
 			util.GetVal(configs, "database", definition.MongoDBDefaultDatabase),
 			util.GetVal(configs, "username", definition.MongoDBDefaultUsername),
 			util.GetVal(configs, "password", definition.MongoDBDefaultPassword),
@@ -545,38 +598,51 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 
 	} else if definition.ElasticSearchService == service {
 		// Get ElasticSearch Definition
-		def = definition.GetElasticSearchConfig(serviceID)
+		def = definition.GetElasticSearchConfig(serviceID, version)
 
 	} else if definition.GraphiteService == service {
 		// Get Graphite Definition
-		def = definition.GetGraphiteConfig(serviceID)
+		def = definition.GetGraphiteConfig(serviceID, version)
 
 	} else if definition.PrometheusService == service {
 		// Get Prometheus Definition
 		def = definition.GetPrometheusConfig(
 			serviceID,
+			version,
 			fmt.Sprintf("%s/%s.prometheus.yml", util.RemoveTrailingSlash(viper.GetString("app.storage.path")), serviceID),
 		)
 
 	} else if definition.ZipkinService == service {
 		// Get Zipkin Definition
-		def = definition.GetZipkinConfig(serviceID)
+		def = definition.GetZipkinConfig(serviceID, version)
 
 	} else if definition.MemcachedService == service {
 		// Get Memcached Definition
-		def = definition.GetMemcachedConfig(serviceID)
+		def = definition.GetMemcachedConfig(serviceID, version)
 
 	} else if definition.MailhogService == service {
 		// Get Mailhog Definition
-		def = definition.GetMailhogConfig(serviceID)
+		def = definition.GetMailhogConfig(serviceID, version)
 
 	} else if definition.JaegerService == service {
 		// Get Jaeger Definition
-		def = definition.GetJaegerConfig(serviceID)
+		def = definition.GetJaegerConfig(serviceID, version)
 
 	} else if definition.RabbitMQService == service {
 		// Get RabbitMQ Definition
-		def = definition.GetRabbitMQConfig(serviceID)
+		def = definition.GetRabbitMQConfig(serviceID, version)
+
+	} else if definition.ConsulService == service {
+		// Get Consul Definition
+		def = definition.GetConsulConfig(serviceID, version)
+
+	} else if definition.VaultService == service {
+		// Get Vault Definition
+		def = definition.GetVaultConfig(
+			serviceID,
+			version,
+			util.GetVal(configs, "token", definition.VaultDefaultToken),
+		)
 
 	}
 
@@ -586,7 +652,11 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		return err
 	}
 
-	return d.Prune()
+	if viper.GetBool("app.containerization.autoClean") {
+		return d.Prune()
+	}
+
+	return nil
 }
 
 // Prune remove all unused containers, networks, images

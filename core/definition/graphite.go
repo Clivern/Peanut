@@ -34,18 +34,25 @@ const (
 	GraphiteStatsdAdminPort = "8126"
 
 	// GraphiteDockerImage const
-	GraphiteDockerImage = "graphiteapp/graphite-statsd:1.1.7-11"
+	GraphiteDockerImage = "graphiteapp/graphite-statsd"
+
+	// GraphiteDockerImageVersion const
+	GraphiteDockerImageVersion = "1.1.7-11"
 
 	// GraphiteRestartPolicy const
 	GraphiteRestartPolicy = "unless-stopped"
 )
 
 // GetGraphiteConfig gets yaml definition object
-func GetGraphiteConfig(name string) DockerComposeConfig {
+func GetGraphiteConfig(name, version string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if version == "" {
+		version = GraphiteDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   GraphiteDockerImage,
+		Image:   fmt.Sprintf("%s:%s", GraphiteDockerImage, version),
 		Restart: GraphiteRestartPolicy,
 		Ports: []string{
 			GraphiteWebPort,

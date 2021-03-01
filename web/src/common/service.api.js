@@ -45,6 +45,22 @@ const getJob = (payload) => {
 	);
 };
 
+const getServiceTags = (payload) => {
+	let apiKey = "";
+
+	if (payload["apiKey"]) {
+		apiKey = payload["apiKey"];
+	}
+
+	return ApiService.get(
+		"/api/v1/tag/" +
+			payload["serviceType"] +
+			"/" +
+			payload["cache"],
+		apiKey
+	);
+};
+
 const deployService = (payload) => {
 	let apiKey = "";
 
@@ -55,4 +71,11 @@ const deployService = (payload) => {
 	return ApiService.post("/api/v1/service", payload, apiKey);
 };
 
-export { getServices, getService, deleteService, getJob, deployService };
+export {
+	getServices,
+	getService,
+	deleteService,
+	getJob,
+	deployService,
+	getServiceTags,
+};

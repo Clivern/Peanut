@@ -13,7 +13,14 @@ app:
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
 
     # Containerization runtime (supported docker)
-    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker}
+    containerization:
+        driver: ${PEANUT_CONTAINERIZATION_DRIVER:-docker}
+
+        # Clean up stale images, volumes and networks
+        autoClean: ${PEANUT_CONTAINERIZATION_AUTO_CLEAN:-true}
+
+        # Time to cache docker images tags
+        cacheTagsTimeInMinutes: ${PEANUT_CONTAINERIZATION_CACHE_TIME:-10080}
 
     # App Storage
     storage:
