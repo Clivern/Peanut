@@ -9,6 +9,10 @@ archives:
       darwin: Darwin
       linux: Linux
       windows: Windows
+    files:
+      - LICENSE
+      - README.md
+      - config.dist.yml
 before:
   hooks:
     - "go mod download"

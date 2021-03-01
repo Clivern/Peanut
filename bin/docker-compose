@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# cp ./bin/docker-compose /usr/local/bin/
+
+echo "Args: "$@
+
+sleep 1
+echo "Start .."
+sleep 1
+
+for i in 1 2 3 4 5 6 7 8 9 10
+do
+   echo "Task $i .."
+   sleep 1
+done
+
+echo "Hold on .."
+sleep 5
+echo "End .."
+
+sleep 1
+echo "Done!"

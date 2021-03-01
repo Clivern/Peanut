@@ -7,7 +7,7 @@ pull_request_rules:
     conditions:
       - author!=Clivern
       - approved-reviews-by=Clivern
-      - label=merge
+      - label=release
     name: "Automatic Merge 🚀"
   -
     actions:
@@ -15,7 +15,7 @@ pull_request_rules:
         method: merge
     conditions:
       - author=Clivern
-      - label=merge
+      - label=release
     name: "Automatic Merge 🚀"
   -
     actions:
@@ -23,7 +23,7 @@ pull_request_rules:
         method: squash
     conditions:
       - "author=renovate[bot]"
-      - label=merge
+      - label=release
     name: "Automatic Merge for Renovate PRs 🚀"
   -
     actions:

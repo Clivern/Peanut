@@ -20,37 +20,8 @@ type ServicePayload struct {
 	Template    string            `json:"template"`
 	Configs     map[string]string `json:"configs"`
 	DeleteAfter string            `json:"deleteAfter"`
-
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-}
-
-// CreateService controller
-func CreateService(c *gin.Context) {
-	var service ServicePayload
-
-	db := driver.NewEtcdDriver()
-
-	err := db.Connect()
-
-	if err != nil {
-		log.WithFields(log.Fields{
-			"correlation_id": c.GetHeader("x-correlation-id"),
-			"error":          err.Error(),
-		}).Error("Internal server error")
-
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  "Internal server error",
-		})
-		return
-	}
-
-	defer db.Close()
-
-	c.JSON(http.StatusOK, gin.H{
-		"id": service.ID,
-	})
+	CreatedAt   time.Time         `json:"createdAt"`
+	UpdatedAt   time.Time         `json:"updatedAt"`
 }
 
 // GetServices controller

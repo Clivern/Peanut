@@ -29,11 +29,11 @@ const (
 
 // JobRecord type
 type JobRecord struct {
-	ID        string `json:"id"`
-	Service   string `json:"service"`
-	Status    string `json:"status"`
-	CreatedAt int64  `json:"createdAt"`
-	UpdatedAt int64  `json:"updatedAt"`
+	ID        string        `json:"id"`
+	Service   ServiceRecord `json:"service"`
+	Status    string        `json:"status"`
+	CreatedAt int64         `json:"createdAt"`
+	UpdatedAt int64         `json:"updatedAt"`
 }
 
 // Job type
@@ -53,6 +53,8 @@ func NewJobStore(db driver.Database) *Job {
 func (j *Job) CreateRecord(record JobRecord) error {
 	record.CreatedAt = time.Now().Unix()
 	record.UpdatedAt = time.Now().Unix()
+	record.Service.CreatedAt = time.Now().Unix()
+	record.Service.UpdatedAt = time.Now().Unix()
 
 	result, err := util.ConvertToJSON(record)
 
@@ -61,15 +63,15 @@ func (j *Job) CreateRecord(record JobRecord) error {
 	}
 
 	log.WithFields(log.Fields{
-		"job_id":  record.ID,
-		"service": record.Service,
+		"job_id":     record.ID,
+		"service_id": record.Service.ID,
 	}).Debug("Create a job record")
 
 	// store job record data
 	err = j.db.Put(fmt.Sprintf(
 		"%s/service/%s/job/%s/j-data",
 		viper.GetString("app.database.etcd.databaseName"),
-		record.Service,
+		record.Service.ID,
 		record.ID,
 	), result)
 
@@ -91,15 +93,15 @@ func (j *Job) UpdateRecord(record JobRecord) error {
 	}
 
 	log.WithFields(log.Fields{
-		"job_id":  record.ID,
-		"service": record.Service,
+		"job_id":     record.ID,
+		"service_id": record.Service.ID,
 	}).Debug("Update a job record")
 
 	// store job record data
 	err = j.db.Put(fmt.Sprintf(
 		"%s/service/%s/job/%s/j-data",
 		viper.GetString("app.database.etcd.databaseName"),
-		record.Service,
+		record.Service.ID,
 		record.ID,
 	), result)
 
@@ -111,18 +113,18 @@ func (j *Job) UpdateRecord(record JobRecord) error {
 }
 
 // GetRecord gets job record data
-func (j *Job) GetRecord(service, jobID string) (*JobRecord, error) {
+func (j *Job) GetRecord(serviceID, jobID string) (*JobRecord, error) {
 	recordData := &JobRecord{}
 
 	log.WithFields(log.Fields{
-		"job_id":  jobID,
-		"service": service,
+		"job_id":     jobID,
+		"service_id": serviceID,
 	}).Debug("Get a job record data")
 
 	data, err := j.db.Get(fmt.Sprintf(
 		"%s/service/%s/job/%s/j-data",
 		viper.GetString("app.database.etcd.databaseName"),
-		service,
+		serviceID,
 		jobID,
 	))
 
@@ -144,24 +146,24 @@ func (j *Job) GetRecord(service, jobID string) (*JobRecord, error) {
 	}
 
 	return recordData, fmt.Errorf(
-		"Unable to find job record with id: %s and service: %s",
+		"Unable to find job record with id: %s and service id: %s",
 		jobID,
-		service,
+		serviceID,
 	)
 }
 
 // DeleteRecord deletes a job record
-func (j *Job) DeleteRecord(service, jobID string) (bool, error) {
+func (j *Job) DeleteRecord(serviceID, jobID string) (bool, error) {
 
 	log.WithFields(log.Fields{
-		"job_id":  jobID,
-		"service": service,
+		"job_id":     jobID,
+		"service_id": serviceID,
 	}).Debug("Delete a job record")
 
 	count, err := j.db.Delete(fmt.Sprintf(
 		"%s/service/%s/job/%s",
 		viper.GetString("app.database.etcd.databaseName"),
-		service,
+		serviceID,
 		jobID,
 	))
 
@@ -173,7 +175,7 @@ func (j *Job) DeleteRecord(service, jobID string) (bool, error) {
 }
 
 // GetServiceJobs get jobs for a service
-func (j *Job) GetServiceJobs(service string) ([]*JobRecord, error) {
+func (j *Job) GetServiceJobs(serviceID string) ([]*JobRecord, error) {
 
 	log.Debug("Get jobs to run")
 
@@ -182,7 +184,7 @@ func (j *Job) GetServiceJobs(service string) ([]*JobRecord, error) {
 	data, err := j.db.Get(fmt.Sprintf(
 		"%s/service/%s/job",
 		viper.GetString("app.database.etcd.databaseName"),
-		service,
+		serviceID,
 	))
 
 	if err != nil {
@@ -208,7 +210,7 @@ func (j *Job) GetServiceJobs(service string) ([]*JobRecord, error) {
 }
 
 // CountServiceJobs counts service jobs
-func (j *Job) CountServiceJobs(service, status string) (int, error) {
+func (j *Job) CountServiceJobs(serviceID, status string) (int, error) {
 
 	log.Debug("Count service jobs")
 
@@ -217,7 +219,7 @@ func (j *Job) CountServiceJobs(service, status string) (int, error) {
 	data, err := j.db.Get(fmt.Sprintf(
 		"%s/service/%s/job",
 		viper.GetString("app.database.etcd.databaseName"),
-		service,
+		serviceID,
 	))
 
 	if err != nil {

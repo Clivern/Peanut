@@ -7,7 +7,11 @@ package controller
 import (
 	"net/http"
 	"sync"
+	"time"
 
+	"github.com/clivern/peanut/core/driver"
+	"github.com/clivern/peanut/core/model"
+	"github.com/clivern/peanut/core/runtime"
 	"github.com/clivern/peanut/core/util"
 
 	"github.com/gin-gonic/gin"
@@ -17,19 +21,36 @@ import (
 
 // Message type
 type Message struct {
-	Payload       string `json:"payload"`
-	CorrelationID string `json:"CorrelationID"`
+	JobID         string            `json:"jobId"`
+	ServiceID     string            `json:"serviceId"`
+	Template      string            `json:"template"`
+	Configs       map[string]string `json:"configs"`
+	DeleteAfter   string            `json:"deleteAfter"`
+	CorrelationID string            `json:"correlationID"`
 }
 
 // Workers type
 type Workers struct {
-	broadcast chan Message
+	job           *model.Job
+	broadcast     chan Message
+	dockerCompose *runtime.DockerCompose
 }
 
 // NewWorkers get a new workers instance
 func NewWorkers() *Workers {
 	result := new(Workers)
+
+	db := driver.NewEtcdDriver()
+
+	err := db.Connect()
+
+	if err != nil || !db.IsConnected() {
+		panic("Error while connecting to DB")
+	}
+
+	result.job = model.NewJobStore(db)
 	result.broadcast = make(chan Message, viper.GetInt("app.workers.buffer"))
+	result.dockerCompose = runtime.NewDockerCompose()
 
 	return result
 }
@@ -39,6 +60,8 @@ func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
 	message := &Message{}
 
 	err := util.LoadFromJSON(message, rawBody)
+
+	message.CorrelationID = c.GetHeader("x-correlation-id")
 
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -52,15 +75,46 @@ func (w *Workers) BroadcastRequest(c *gin.Context, rawBody []byte) {
 		return
 	}
 
+	message.JobID = util.GenerateUUID4()
+	message.ServiceID = util.GenerateUUID4()
+
 	log.WithFields(log.Fields{
 		"correlation_id": message.CorrelationID,
 		"message":        message,
 	}).Info(`Incoming request`)
 
+	err = w.job.CreateRecord(model.JobRecord{
+		ID: message.JobID,
+		Service: model.ServiceRecord{
+			ID:          message.ServiceID,
+			Template:    message.Template,
+			Configs:     message.Configs,
+			DeleteAfter: message.DeleteAfter,
+		},
+		Status: model.PendingStatus,
+	})
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
 	w.broadcast <- *message
 
-	c.Status(http.StatusAccepted)
-	return
+	c.JSON(http.StatusAccepted, gin.H{
+		"id":        message.JobID,
+		"type":      "service.provision",
+		"status":    "PENDING",
+		"createdAt": time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
+	})
 }
 
 // HandleWorkload handles all incoming requests
@@ -72,7 +126,7 @@ func (w *Workers) HandleWorkload() <-chan Message {
 
 		for t := 0; t < viper.GetInt("app.workers.count"); t++ {
 			wg.Add(1)
-			go w.ProcessAction(notifyChannel, wg)
+			go w.DeployService(notifyChannel, wg)
 		}
 
 		wg.Wait()
@@ -83,8 +137,8 @@ func (w *Workers) HandleWorkload() <-chan Message {
 	return notifyChannel
 }
 
-// ProcessAction process incoming request
-func (w *Workers) ProcessAction(notifyChannel chan<- Message, wg *sync.WaitGroup) {
+// DeployService process incoming request
+func (w *Workers) DeployService(notifyChannel chan<- Message, wg *sync.WaitGroup) {
 	for message := range w.broadcast {
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,
@@ -92,6 +146,12 @@ func (w *Workers) ProcessAction(notifyChannel chan<- Message, wg *sync.WaitGroup
 		}).Info(`Worker received a new message`)
 
 		// Process message
+		w.dockerCompose.Deploy(model.ServiceRecord{
+			ID:          message.ServiceID,
+			Template:    message.Template,
+			Configs:     message.Configs,
+			DeleteAfter: message.DeleteAfter,
+		})
 
 		log.WithFields(log.Fields{
 			"correlation_id": message.CorrelationID,

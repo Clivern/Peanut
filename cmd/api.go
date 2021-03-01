@@ -147,19 +147,30 @@ var towerCmd = &cobra.Command{
 
 		r.NoRoute(gin.WrapH(http.FileServer(pkger.Dir("/web/dist"))))
 
-		r.POST("/api/v1/service", func(c *gin.Context) {
-			rawBody, err := c.GetRawData()
+		apiv1 := r.Group("/api/v1")
+		{
+			apiv1.POST("/service", func(c *gin.Context) {
+				rawBody, err := c.GetRawData()
 
-			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"status": "error",
-					"error":  "Invalid request",
-				})
-				return
-			}
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"status": "error",
+						"error":  "Invalid request",
+					})
+					return
+				}
 
-			workers.BroadcastRequest(c, rawBody)
-		})
+				workers.BroadcastRequest(c, rawBody)
+			})
+
+			apiv1.GET("/service", controller.GetServices)
+			apiv1.GET("/service/:serviceId", controller.GetService)
+			apiv1.DELETE("/service/:serviceId", controller.DeleteService)
+
+			apiv1.GET("/job", controller.GetJobs)
+			apiv1.GET("/job/:jobId", controller.GetJob)
+			apiv1.DELETE("/job/:jobId", controller.DeleteJob)
+		}
 
 		go workers.Finalize(workers.HandleWorkload())
 

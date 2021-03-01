@@ -17,19 +17,19 @@ rm -f /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
 /tmp/etcd-download-test/etcd --version
 /tmp/etcd-download-test/etcdctl version
 
-sudo cp /tmp/etcd-download-test/etcd /usr/local/bin/
-sudo cp /tmp/etcd-download-test/etcdctl /usr/local/bin/
+cp /tmp/etcd-download-test/etcd /usr/local/bin/
+cp /tmp/etcd-download-test/etcdctl /usr/local/bin/
 
-sudo mkdir -p /var/lib/etcd/
-sudo mkdir /etc/etcd
+mkdir -p /var/lib/etcd/
+mkdir /etc/etcd
 
-sudo groupadd --system etcd
-sudo useradd -s /sbin/nologin --system -g etcd etcd
+groupadd --system etcd
+useradd -s /sbin/nologin --system -g etcd etcd
 
-sudo chown -R etcd:etcd /var/lib/etcd/
+chown -R etcd:etcd /var/lib/etcd/
 
 echo "[Unit]
-Description=etcd key-value store
+Description=Etcd KV Store
 Documentation=https://github.com/etcd-io/etcd
 After=network.target
 
@@ -46,8 +46,8 @@ LimitNOFILE=40000
 [Install]
 WantedBy=multi-user.target" > /etc/systemd/system/etcd.service
 
-sudo systemctl daemon-reload
-sudo systemctl start etcd.service
+systemctl daemon-reload
+systemctl start etcd.service
 
 # Then enable authentication on etcd server
 # etcdctl user add root
