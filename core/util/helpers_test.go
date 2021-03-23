@@ -2,8 +2,6 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// +build unit
-
 package util
 
 import (
@@ -15,8 +13,8 @@ import (
 	"github.com/franela/goblin"
 )
 
-// TestHelpers
-func TestHelpers(t *testing.T) {
+// TestUnitHelpers
+func TestUnitHelpers(t *testing.T) {
 	baseDir := pkg.GetBaseDir("cache")
 	pkg.LoadConfigs(fmt.Sprintf("%s/config.dist.yml", baseDir))
 

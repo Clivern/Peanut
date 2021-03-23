@@ -60,7 +60,7 @@ test_short:
 test:
 	@echo ">> ============= Running All Tests ============= <<"
 	$(GO) clean -testcache
-	$(GO) test -mod=readonly -tags=unit -v -cover $(pkgs)
+	$(GO) test -mod=readonly -run=Unit -bench=. -benchmem -v -cover $(pkgs)
 
 
 ## integration: Run integration test cases (Requires etcd)
@@ -68,7 +68,7 @@ test:
 integration:
 	@echo ">> ============= Running All Tests ============= <<"
 	$(GO) clean -testcache
-	$(GO) test -mod=readonly -tags=integration -v -cover $(pkgs)
+	$(GO) test -mod=readonly -run=Integration -bench=. -benchmem -v -cover $(pkgs)
 
 
 ## lint: Lint the code.

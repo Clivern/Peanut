@@ -2,8 +2,6 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// +build integration
-
 package model
 
 import (
@@ -18,8 +16,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// TestOptionMethods test cases
-func TestOptionMethods(t *testing.T) {
+// TestIntegrationOptionMethods test cases
+func TestIntegrationOptionMethods(t *testing.T) {
 	// Skip if -short flag exist
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")

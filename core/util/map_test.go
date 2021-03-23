@@ -2,8 +2,6 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// +build unit
-
 package util
 
 import (
@@ -15,8 +13,8 @@ import (
 	"github.com/franela/goblin"
 )
 
-// TestMap
-func TestMap(t *testing.T) {
+// TestUnitMap
+func TesUnittMap(t *testing.T) {
 	g := goblin.Goblin(t)
 
 	g.Describe("#Map", func() {

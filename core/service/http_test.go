@@ -2,8 +2,6 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// +build unit
-
 package service
 
 import (
@@ -15,8 +13,8 @@ import (
 	"github.com/franela/goblin"
 )
 
-// TestHttpClientMethods
-func TestHttpClientMethods(t *testing.T) {
+// TestUnitClientMethods
+func TestUnitHttpClientMethods(t *testing.T) {
 	g := goblin.Goblin(t)
 	httpClient := NewHTTPClient(30)
 
