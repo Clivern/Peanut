@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="/assets/logo.png" width="300" />
+    <img src="/assets/logo.png" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Provision Databases and Services for Development and Testing.</p>
     <p align="center">
