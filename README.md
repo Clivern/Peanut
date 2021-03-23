@@ -3,8 +3,8 @@
     <h3 align="center">Peanut</h3>
     <p align="center">Provision Databases and Services for Development and Testing.</p>
     <p align="center">
-        <a href="https://github.com/Clivern/Peanut/actions">
-            <img src="https://github.com/Clivern/Peanut/workflows/Build/badge.svg">
+        <a href="https://github.com/Clivern/Peanut/actions/workflows/build.yml">
+            <img src="https://github.com/Clivern/Peanut/actions/workflows/build.yml/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/actions">
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
