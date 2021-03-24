@@ -17,7 +17,7 @@ func TestUnitRedis(t *testing.T) {
 
 	g.Describe("#TestRedis", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			redis := GetRedis("redis:1.0.0", "redis_data", "1111", "always")
+			redis := GetRedisConfig("redis:1.0.0", "redis_data", "1111", "always")
 			result, err := redis.ToString()
 
 			g.Assert(strings.Contains(result, "image: redis:1.0.0")).Equal(true)

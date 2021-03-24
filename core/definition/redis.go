@@ -16,8 +16,8 @@ const (
 	RedisData = "/data"
 )
 
-// GetRedis gets yaml definition object
-func GetRedis(image, volume, port, restart string) *DockerComposeConfig {
+// GetRedisConfig gets yaml definition object
+func GetRedisConfig(image, volume, port, restart string) *DockerComposeConfig {
 	services := make(map[string]Service)
 	volumes := make(map[string]string)
 

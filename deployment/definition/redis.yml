@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+   redis:
+      image: 'redis:5.0.10-alpine'
+      volumes:
+         - 'redis_data:/data'
+      ports:
+         - "6379:6379"
+      restart: unless-stopped
+
+volumes:
+   redis_data: ""
