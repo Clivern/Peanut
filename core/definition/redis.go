@@ -8,6 +8,14 @@ import (
 	"fmt"
 )
 
+const (
+	// RedisPort const
+	RedisPort = "6379"
+
+	// RedisData const
+	RedisData = "/data"
+)
+
 // GetRedis gets yaml definition object
 func GetRedis(image, volume, port, restart string) *DockerComposeConfig {
 	services := make(map[string]Service)
@@ -17,10 +25,10 @@ func GetRedis(image, volume, port, restart string) *DockerComposeConfig {
 		Image:   image,
 		Restart: restart,
 		Volumes: []string{
-			fmt.Sprintf("%s:/data", volume),
+			fmt.Sprintf("%s:%s", volume, RedisData),
 		},
 		Ports: []string{
-			fmt.Sprintf("6379:%s", port),
+			fmt.Sprintf("%s:%s", RedisPort, port),
 		},
 	}
 
