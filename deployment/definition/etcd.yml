@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-    etcd:
-        image: docker.io/bitnami/etcd:3-debian-10
-        environment:
-            - ALLOW_NONE_AUTHENTICATION=yes
-        volumes:
-            - etcd_data:/bitnami/etcd
-        restart: unless-stopped
+   etcd:
+      image: docker.io/bitnami/etcd:3-debian-10
+      environment:
+         - ALLOW_NONE_AUTHENTICATION=yes
+      volumes:
+         - etcd_data:/bitnami/etcd
+      restart: unless-stopped
 
 volumes:
-    etcd_data: ""
+   etcd_data: ""
