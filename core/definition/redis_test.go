@@ -11,11 +11,11 @@ import (
 	"github.com/franela/goblin"
 )
 
-// TestUnitToString test cases
-func TestUnitToString(t *testing.T) {
+// TestUnitRedis test cases
+func TestUnitRedis(t *testing.T) {
 	g := goblin.Goblin(t)
 
-	g.Describe("#ToString", func() {
+	g.Describe("#TestRedis", func() {
 		g.It("It should satisfy all provided test cases", func() {
 			redis := GetRedis("redis:1.0.0", "redis_data", "1111", "always")
 			result, err := redis.ToString()
@@ -24,6 +24,7 @@ func TestUnitToString(t *testing.T) {
 			g.Assert(strings.Contains(result, "- redis_data:/data")).Equal(true)
 			g.Assert(strings.Contains(result, "- 6379:1111")).Equal(true)
 			g.Assert(strings.Contains(result, "restart: always")).Equal(true)
+			g.Assert(strings.Contains(result, `redis_data: ""`)).Equal(true)
 			g.Assert(err).Equal(nil)
 		})
 	})
