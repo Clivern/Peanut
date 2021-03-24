@@ -1,6 +1,7 @@
 version: '3'
 
 services:
+
    etcd:
       image: docker.io/bitnami/etcd:3-debian-10
       environment:
