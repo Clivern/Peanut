@@ -8,8 +8,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// DockerCompose type
-type DockerCompose struct {
+// DockerComposeConfig type
+type DockerComposeConfig struct {
 	Version  string             `yaml:"version"`
 	Services map[string]Service `yaml:"services"`
 	Networks map[string]string  `yaml:"networks,omitempty"`
@@ -27,7 +27,7 @@ type Service struct {
 }
 
 // ToString converts object to a string
-func (d *DockerCompose) ToString() (string, error) {
+func (d *DockerComposeConfig) ToString() (string, error) {
 	o, err := yaml.Marshal(&d)
 
 	if err != nil {

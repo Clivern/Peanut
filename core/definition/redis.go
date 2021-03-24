@@ -9,7 +9,7 @@ import (
 )
 
 // GetRedis gets yaml definition object
-func GetRedis(image, volume, port, restart string) *DockerCompose {
+func GetRedis(image, volume, port, restart string) *DockerComposeConfig {
 	services := make(map[string]Service)
 	volumes := make(map[string]string)
 
@@ -26,7 +26,7 @@ func GetRedis(image, volume, port, restart string) *DockerCompose {
 
 	volumes[volume] = ""
 
-	return &DockerCompose{
+	return &DockerComposeConfig{
 		Version:  "3",
 		Services: services,
 		Volumes:  volumes,
