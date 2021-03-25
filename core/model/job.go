@@ -30,8 +30,7 @@ const (
 // JobRecord type
 type JobRecord struct {
 	ID        string `json:"id"`
-	Hostname  string `json:"hostname"`
-	CronID    string `json:"cronId"`
+	Service   string `json:"service"`
 	Status    string `json:"status"`
 	CreatedAt int64  `json:"createdAt"`
 	UpdatedAt int64  `json:"updatedAt"`
@@ -62,15 +61,15 @@ func (j *Job) CreateRecord(record JobRecord) error {
 	}
 
 	log.WithFields(log.Fields{
-		"job_id":   record.ID,
-		"hostname": record.Hostname,
+		"job_id":  record.ID,
+		"service": record.Service,
 	}).Debug("Create a job record")
 
 	// store job record data
 	err = j.db.Put(fmt.Sprintf(
-		"%s/host/%s/job/%s/j-data",
+		"%s/service/%s/job/%s/j-data",
 		viper.GetString("app.database.etcd.databaseName"),
-		record.Hostname,
+		record.Service,
 		record.ID,
 	), result)
 
@@ -92,15 +91,15 @@ func (j *Job) UpdateRecord(record JobRecord) error {
 	}
 
 	log.WithFields(log.Fields{
-		"job_id":   record.ID,
-		"hostname": record.Hostname,
+		"job_id":  record.ID,
+		"service": record.Service,
 	}).Debug("Update a job record")
 
 	// store job record data
 	err = j.db.Put(fmt.Sprintf(
-		"%s/host/%s/job/%s/j-data",
+		"%s/service/%s/job/%s/j-data",
 		viper.GetString("app.database.etcd.databaseName"),
-		record.Hostname,
+		record.Service,
 		record.ID,
 	), result)
 
@@ -112,18 +111,18 @@ func (j *Job) UpdateRecord(record JobRecord) error {
 }
 
 // GetRecord gets job record data
-func (j *Job) GetRecord(hostname, jobID string) (*JobRecord, error) {
+func (j *Job) GetRecord(service, jobID string) (*JobRecord, error) {
 	recordData := &JobRecord{}
 
 	log.WithFields(log.Fields{
-		"job_id":   jobID,
-		"hostname": hostname,
+		"job_id":  jobID,
+		"service": service,
 	}).Debug("Get a job record data")
 
 	data, err := j.db.Get(fmt.Sprintf(
-		"%s/host/%s/job/%s/j-data",
+		"%s/service/%s/job/%s/j-data",
 		viper.GetString("app.database.etcd.databaseName"),
-		hostname,
+		service,
 		jobID,
 	))
 
@@ -145,24 +144,24 @@ func (j *Job) GetRecord(hostname, jobID string) (*JobRecord, error) {
 	}
 
 	return recordData, fmt.Errorf(
-		"Unable to find job record with id: %s and hostname: %s",
+		"Unable to find job record with id: %s and service: %s",
 		jobID,
-		hostname,
+		service,
 	)
 }
 
 // DeleteRecord deletes a job record
-func (j *Job) DeleteRecord(hostname, jobID string) (bool, error) {
+func (j *Job) DeleteRecord(service, jobID string) (bool, error) {
 
 	log.WithFields(log.Fields{
-		"job_id":   jobID,
-		"hostname": hostname,
+		"job_id":  jobID,
+		"service": service,
 	}).Debug("Delete a job record")
 
 	count, err := j.db.Delete(fmt.Sprintf(
-		"%s/host/%s/job/%s",
+		"%s/service/%s/job/%s",
 		viper.GetString("app.database.etcd.databaseName"),
-		hostname,
+		service,
 		jobID,
 	))
 
@@ -173,17 +172,17 @@ func (j *Job) DeleteRecord(hostname, jobID string) (bool, error) {
 	return count > 0, nil
 }
 
-// GetHostJobs get jobs for a host
-func (j *Job) GetHostJobs(hostname string) ([]*JobRecord, error) {
+// GetServiceJobs get jobs for a service
+func (j *Job) GetServiceJobs(service string) ([]*JobRecord, error) {
 
 	log.Debug("Get jobs to run")
 
 	records := make([]*JobRecord, 0)
 
 	data, err := j.db.Get(fmt.Sprintf(
-		"%s/host/%s/job",
+		"%s/service/%s/job",
 		viper.GetString("app.database.etcd.databaseName"),
-		hostname,
+		service,
 	))
 
 	if err != nil {
@@ -208,17 +207,17 @@ func (j *Job) GetHostJobs(hostname string) ([]*JobRecord, error) {
 	return records, nil
 }
 
-// CountHostJobs counts host jobs
-func (j *Job) CountHostJobs(hostname, cronID, status string) (int, error) {
+// CountServiceJobs counts service jobs
+func (j *Job) CountServiceJobs(service, status string) (int, error) {
 
-	log.Debug("Count host jobs")
+	log.Debug("Count service jobs")
 
 	count := 0
 
 	data, err := j.db.Get(fmt.Sprintf(
-		"%s/host/%s/job",
+		"%s/service/%s/job",
 		viper.GetString("app.database.etcd.databaseName"),
-		hostname,
+		service,
 	))
 
 	if err != nil {
@@ -236,7 +235,7 @@ func (j *Job) CountHostJobs(hostname, cronID, status string) (int, error) {
 				return count, err
 			}
 
-			if recordData.Status != status || cronID != recordData.CronID {
+			if recordData.Status != status {
 				continue
 			}
 
