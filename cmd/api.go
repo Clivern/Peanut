@@ -121,6 +121,7 @@ var towerCmd = &cobra.Command{
 		}
 
 		r := gin.Default()
+		workers := controller.NewWorkers()
 
 		// Allow CORS only for development
 		if viper.GetString("app.mode") == "dev" {
@@ -145,6 +146,22 @@ var towerCmd = &cobra.Command{
 		)
 
 		r.NoRoute(gin.WrapH(http.FileServer(pkger.Dir("/web/dist"))))
+
+		r.POST("/api/v1/service", func(c *gin.Context) {
+			rawBody, err := c.GetRawData()
+
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status": "error",
+					"error":  "Invalid request",
+				})
+				return
+			}
+
+			workers.BroadcastRequest(c, rawBody)
+		})
+
+		go workers.Finalize(workers.HandleWorkload())
 
 		var runerr error
 
