@@ -4,6 +4,10 @@
 
 package runtime
 
+import (
+	"github.com/clivern/peanut/core/model"
+)
+
 // DockerCompose type
 type DockerCompose struct {
 }
@@ -15,9 +19,11 @@ func NewDockerCompose() *DockerCompose {
 }
 
 // Deploy deploys services
-func (d *DockerCompose) Deploy() {
+func (d *DockerCompose) Deploy(service *model.ServiceRecord) (*model.ServiceRecord, error) {
+	return service, nil
 }
 
 // Destroy destroys services
-func (d *DockerCompose) Destroy() {
+func (d *DockerCompose) Destroy(service *model.ServiceRecord) (*model.ServiceRecord, error) {
+	return service, nil
 }

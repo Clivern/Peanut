@@ -23,12 +23,12 @@ const (
 
 // ServiceRecord type
 type ServiceRecord struct {
-	ID          string `json:"id"`
-	Template    string `json:"template"`
-	Configs     string `json:"configs"`
-	DeleteAfter string `json:"deleteAfter"`
-	CreatedAt   int64  `json:"createdAt"`
-	UpdatedAt   int64  `json:"updatedAt"`
+	ID          string            `json:"id"`
+	Template    string            `json:"template"`
+	Configs     map[string]string `json:"configs"`
+	DeleteAfter string            `json:"deleteAfter"`
+	CreatedAt   int64             `json:"createdAt"`
+	UpdatedAt   int64             `json:"updatedAt"`
 }
 
 // Service type
