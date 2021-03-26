@@ -1,4 +1,4 @@
-// Copyright 2020 Clivern. All rights reserved.
+// Copyright 2021 Clivern. All rights reserved.
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
@@ -16,15 +16,18 @@ import (
 
 // ServicePayload type
 type ServicePayload struct {
-	Ident string `json:"ident"`
+	ID          string            `json:"id"`
+	Template    string            `json:"template"`
+	Configs     map[string]string `json:"configs"`
+	DeleteAfter string            `json:"deleteAfter"`
 
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// GetServices controller
-func GetServices(c *gin.Context) {
-	var services []ServicePayload
+// CreateService controller
+func CreateService(c *gin.Context) {
+	var service ServicePayload
 
 	db := driver.NewEtcdDriver()
 
@@ -46,7 +49,34 @@ func GetServices(c *gin.Context) {
 	defer db.Close()
 
 	c.JSON(http.StatusOK, gin.H{
-		"services": services,
+		"id": service.ID,
+	})
+}
+
+// GetServices controller
+func GetServices(c *gin.Context) {
+
+	db := driver.NewEtcdDriver()
+
+	err := db.Connect()
+
+	if err != nil {
+		log.WithFields(log.Fields{
+			"correlation_id": c.GetHeader("x-correlation-id"),
+			"error":          err.Error(),
+		}).Error("Internal server error")
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"correlationID": c.GetHeader("x-correlation-id"),
+			"errorMessage":  "Internal server error",
+		})
+		return
+	}
+
+	defer db.Close()
+
+	c.JSON(http.StatusOK, gin.H{
+		"id": 1,
 	})
 }
 

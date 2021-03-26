@@ -24,7 +24,7 @@ const (
 // ServiceRecord type
 type ServiceRecord struct {
 	ID          string `json:"id"`
-	Ident       string `json:"ident"`
+	Template    string `json:"template"`
 	Configs     string `json:"configs"`
 	DeleteAfter string `json:"deleteAfter"`
 	CreatedAt   int64  `json:"createdAt"`
@@ -57,7 +57,7 @@ func (s *Service) CreateRecord(record ServiceRecord) error {
 
 	log.WithFields(log.Fields{
 		"service_id": record.ID,
-		"ident":      record.Ident,
+		"template":   record.Template,
 	}).Debug("Create a service record")
 
 	// store service record data
@@ -86,7 +86,7 @@ func (s *Service) UpdateRecord(record ServiceRecord) error {
 
 	log.WithFields(log.Fields{
 		"service_id": record.ID,
-		"ident":      record.Ident,
+		"template":   record.Template,
 	}).Debug("Update a service record")
 
 	// store service record data

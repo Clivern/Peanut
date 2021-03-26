@@ -8,8 +8,16 @@ package runtime
 type DockerCompose struct {
 }
 
-// NewDocker creates a new instance
-func NewDocker() *DockerCompose {
+// NewDockerCompose creates a new instance
+func NewDockerCompose() *DockerCompose {
 	instance := new(DockerCompose)
 	return instance
+}
+
+// Deploy deploys services
+func (d *DockerCompose) Deploy() {
+}
+
+// Destroy destroys services
+func (d *DockerCompose) Destroy() {
 }

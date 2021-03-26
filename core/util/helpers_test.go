@@ -20,7 +20,7 @@ func TestUnitHelpers(t *testing.T) {
 
 	g := goblin.Goblin(t)
 
-	g.Describe("#TestInArray", func() {
+	g.Describe("#TestInArrayFunc", func() {
 		g.It("It should satisfy test cases", func() {
 			g.Assert(InArray("A", []string{"A", "B", "C", "D"})).Equal(true)
 			g.Assert(InArray("B", []string{"A", "B", "C", "D"})).Equal(true)

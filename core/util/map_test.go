@@ -17,7 +17,7 @@ import (
 func TesUnittMap(t *testing.T) {
 	g := goblin.Goblin(t)
 
-	g.Describe("#Map", func() {
+	g.Describe("#TestMap", func() {
 		g.It("It should not panic and length is right", func() {
 
 			var wg sync.WaitGroup
