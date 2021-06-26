@@ -1,0 +1,57 @@
+# App configs
+app:
+    # Env mode (dev or prod)
+    mode: ${PEANUT_APP_MODE:-dev}
+    # HTTP port
+    port: ${PEANUT_API_PORT:-8000}
+    # URL
+    url: ${PEANUT_API_URL:-http://127.0.0.1:8000}
+    # TLS configs
+    tls:
+        status: ${PEANUT_API_TLS_STATUS:-off}
+        pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
+        keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
+
+    # API Configs
+    api:
+        key: ${PEANUT_API_KEY:-6c68b836-6f8e-465e-b59f-89c1db53afca}
+
+    # Async Workers
+    workers:
+        # Queue max capacity
+        buffer: ${PEANUT_WORKERS_CHAN_CAPACITY:-5000}
+        # Number of concurrent workers
+        count: ${PEANUT_WORKERS_COUNT:-4}
+
+    # Runtime, Requests/Response and Peanut Metrics
+    metrics:
+        prometheus:
+            # Route for the metrics endpoint
+            endpoint: ${PEANUT_METRICS_PROM_ENDPOINT:-/metrics}
+
+    # Application Database
+    database:
+        # Database driver
+        driver: ${PEANUT_DB_DRIVER:-etcd}
+
+        # Etcd Configs
+        etcd:
+            # Etcd database name or prefix
+            databaseName: ${PEANUT_DB_ETCD_DB:-peanut}
+            # Etcd username
+            username: ${PEANUT_DB_ETCD_USERNAME:- }
+            # Etcd password
+            password: ${PEANUT_DB_ETCD_PASSWORD:- }
+            # Etcd endpoints
+            endpoints: ${PEANUT_DB_ETCD_ENDPOINTS:-http://127.0.0.1:2379}
+            # Timeout in seconds
+            timeout: 30
+
+    # Log configs
+    log:
+        # Log level, it can be debug, info, warn, error, panic, fatal
+        level: ${PEANUT_LOG_LEVEL:-info}
+        # Output can be stdout or abs path to log file /var/logs/peanut.log
+        output: ${PEANUT_LOG_OUTPUT:-stdout}
+        # Format can be json
+        format: ${PEANUT_LOG_FORMAT:-json}
