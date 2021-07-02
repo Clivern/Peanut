@@ -8,29 +8,35 @@ import (
 	"fmt"
 )
 
-// Redis type
-type Redis struct {
-	Image   string   `yaml:"image"`
-	Volumes []string `yaml:"volumes"`
-	Ports   []string `yaml:"ports"`
-	Restart string   `yaml:"restart"`
-}
+const (
+	// RedisPort const
+	RedisPort = "6379"
 
-// GetRedis ..
-func GetRedis(image, volume, port, restart string) *Compose {
-	return &Compose{
-		Version: "3",
-		Services: Services{
-			Redis: Redis{
-				Image:   image,
-				Restart: restart,
-				Volumes: []string{
-					fmt.Sprintf("%s:/data", volume),
-				},
-				Ports: []string{
-					fmt.Sprintf("6379:%s", port),
-				},
-			},
+	// RedisData const
+	RedisData = "/data"
+)
+
+// GetRedisConfig gets yaml definition object
+func GetRedisConfig(image, volume, port, restart string) *DockerComposeConfig {
+	services := make(map[string]Service)
+	volumes := make(map[string]string)
+
+	services["redis"] = Service{
+		Image:   image,
+		Restart: restart,
+		Volumes: []string{
+			fmt.Sprintf("%s:%s", volume, RedisData),
 		},
+		Ports: []string{
+			fmt.Sprintf("%s:%s", RedisPort, port),
+		},
+	}
+
+	volumes[volume] = ""
+
+	return &DockerComposeConfig{
+		Version:  "3",
+		Services: services,
+		Volumes:  volumes,
 	}
 }

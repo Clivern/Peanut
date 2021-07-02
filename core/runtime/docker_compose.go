@@ -4,12 +4,12 @@
 
 package runtime
 
-// Docker type
-type Docker struct {
+// DockerCompose type
+type DockerCompose struct {
 }
 
 // NewDocker creates a new instance
-func NewDocker() *Docker {
-	instance := new(Docker)
+func NewDocker() *DockerCompose {
+	instance := new(DockerCompose)
 	return instance
 }
