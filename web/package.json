@@ -21,7 +21,7 @@
 		"@vue/cli-plugin-router": "4.5.13",
 		"@vue/cli-service": "3.12.1",
 		"babel-eslint": "10.1.0",
-		"eslint": "7.18.0",
+		"eslint": "7.30.0",
 		"eslint-plugin-vue": "6.2.2",
 		"prettier": "2.3.2",
 		"vue-template-compiler": "2.6.14"
