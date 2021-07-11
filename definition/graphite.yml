@@ -4,9 +4,16 @@ services:
    graphite:
       image: 'graphiteapp/graphite-statsd:1.1.7-11'
       ports:
+         # webPort
          - '80'
+         # carbonPort 2003
+         # carbonPicklePort 2004
          - '2003-2004'
+         # carbonAggregatorPort 2023
+         # carbonAggregatorPicklePort 2024
          - '2023-2024'
+         # statsdPort
          - '8125'
+         # statsdAdminPort
          - '8126'
       restart: unless-stopped

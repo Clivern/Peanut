@@ -33,8 +33,8 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 
 	dynamicConfigs := make(map[string]string)
 
-	// Deploy Redis
 	if definition.RedisService == service {
+		// Deploy Redis
 		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.RedisDefaultPassword)
 
 		def = definition.GetRedisConfig(serviceID, dynamicConfigs["password"])
@@ -51,8 +51,8 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 			return dynamicConfigs, err
 		}
 
-		// Deploy Etcd
 	} else if definition.EtcdService == service {
+		// Deploy Etcd
 		def = definition.GetEtcdConfig(serviceID)
 
 		err = d.deployService(serviceID, def)
@@ -67,8 +67,8 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 			return dynamicConfigs, err
 		}
 
-		// Deploy Grafana
 	} else if definition.GrafanaService == service {
+		// Deploy Grafana
 		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.GrafanaDefaultUsername)
 		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.GrafanaDefaultPassword)
 
@@ -86,8 +86,8 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 			return dynamicConfigs, err
 		}
 
-		// Deploy MariaDB
 	} else if definition.MariaDBService == service {
+		// Deploy MariaDB
 		dynamicConfigs["rootPassword"] = util.GetVal(configs, "rootPassword", definition.MariaDBDefaultRootPassword)
 		dynamicConfigs["database"] = util.GetVal(configs, "database", definition.MariaDBDefaultDatabase)
 		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MariaDBDefaultUsername)
@@ -113,8 +113,8 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 			return dynamicConfigs, err
 		}
 
-		// Deploy MySQL
 	} else if definition.MySQLService == service {
+		// Deploy MySQL
 		dynamicConfigs["rootPassword"] = util.GetVal(configs, "rootPassword", definition.MySQLDefaultRootPassword)
 		dynamicConfigs["database"] = util.GetVal(configs, "database", definition.MySQLDefaultDatabase)
 		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MySQLDefaultUsername)
@@ -139,6 +139,114 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.ElasticSearchService == service {
+		// Deploy ElasticSearch
+		def = definition.GetElasticSearchConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["requestsPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.ElasticSearchRequestsPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["communicationPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.ElasticSearchCommunicationPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+	} else if definition.GraphiteService == service {
+		// Deploy Graphite
+		def = definition.GetGraphiteConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["webPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteWebPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["carbonPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteCarbonPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["carbonPicklePort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteCarbonPicklePort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["carbonAggregatorPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteCarbonAggregatorPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["carbonAggregatorPicklePort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteCarbonAggregatorPicklePort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["statsdPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteStatsdPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["statsdAdminPort"], err = d.fetchServicePort(
+			serviceID,
+			definition.GraphiteStatsdAdminPort,
+			def,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -149,7 +257,6 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 	var def definition.DockerComposeConfig
 
 	if definition.RedisService == service {
-
 		// Get Redis Definition
 		def = definition.GetRedisConfig(
 			serviceID,
@@ -157,12 +264,10 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		)
 
 	} else if definition.EtcdService == service {
-
 		// Get Etcd Definition
 		def = definition.GetEtcdConfig(serviceID)
 
 	} else if definition.GrafanaService == service {
-
 		// Get Grafana Definition
 		def = definition.GetGrafanaConfig(
 			serviceID,
@@ -171,7 +276,6 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		)
 
 	} else if definition.MariaDBService == service {
-
 		// Get MariaDB Definition
 		def = definition.GetMariaDBConfig(
 			serviceID,
@@ -182,7 +286,6 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		)
 
 	} else if definition.MySQLService == service {
-
 		// Get MySQL Definition
 		def = definition.GetMySQLConfig(
 			serviceID,
@@ -191,6 +294,14 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 			util.GetVal(configs, "username", definition.MySQLDefaultUsername),
 			util.GetVal(configs, "password", definition.MySQLDefaultPassword),
 		)
+
+	} else if definition.ElasticSearchService == service {
+		// Get ElasticSearch Definition
+		def = definition.GetElasticSearchConfig(serviceID)
+
+	} else if definition.GraphiteService == service {
+		// Get Graphite Definition
+		def = definition.GetGraphiteConfig(serviceID)
 
 	}
 

@@ -89,6 +89,8 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.GrafanaService,
 		definition.MariaDBService,
 		definition.MySQLService,
+		definition.ElasticSearchService,
+		definition.GraphiteService,
 	}
 
 	if !util.InArray(message.Service, allowed) {

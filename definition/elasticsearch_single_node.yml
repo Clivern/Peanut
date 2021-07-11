@@ -7,6 +7,8 @@ services:
       environment:
          - discovery.type=single-node
       ports:
+         # for requests
          - '9200'
+         # communication between nodes within the cluster
          - '9300'
       restart: unless-stopped

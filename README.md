@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.19-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.20-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.19">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.20">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -37,10 +37,20 @@ Under the hood, it works with the containerization runtime like docker to deploy
 
 Technically you can achieve the same with a bunch of yaml files or using a configuration management tool or a package manager like helm but peanut is pretty small and fun to use & should spead up your workflow!
 
+Supported Services:
+
+- MySQL.
+- MariaDB.
+- Redis.
+- Etcd.
+- Grafana.
+- Elasticsearch.
+- Graphite.
+
 
 ## Documentation
 
-### Run Peanut on Ubuntu
+#### Run Peanut on Ubuntu
 
 To run peanut on ubuntu, You can use the following bash script since it may take a while for a cold start. the script will install etcd, docker, docker-compose and peanut.
 
@@ -117,7 +127,7 @@ $ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key:6c68b836-6f8e
 ```
 
 
-### Linux Deployment Explained
+#### Linux Deployment Explained
 
 Download [the latest peanut binary](https://github.com/Clivern/Peanut/releases). Make it executable from everywhere.
 
@@ -138,7 +148,6 @@ $ systemctl enable docker
 
 $ apt-get install docker-compose -y
 ```
-#### Run Peanut:
 
 Create the configs file `config.yml` from `config.dist.yml`. Something like the following:
 
@@ -225,7 +234,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"service":"redis"}' -H 
 ```
 
 
-### To run the Admin Dashboard (Development Only):
+#### To run the Admin Dashboard (Development Only):
 
 Clone the project or your own fork:
 
@@ -270,12 +279,12 @@ $ go get github.com/markbates/pkger/cmd/pkger
 $ make package
 ```
 
-### The command line tool
+#### The command line tool
 
 In order to interact with peanut API server, you can either do basic API calls or use the provided command line tool. It is still not finished yet but it will be ready soon.
 
 
-### Supported Services
+#### Supported Services
 
 Here is a list of all supported services so far and the API call to deploy them.
 
@@ -316,6 +325,22 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"grafana","configs": {"username": "admin", "password": "admin"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Elasticsearch
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"elasticsearch"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Graphite
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"graphite"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 
