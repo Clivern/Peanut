@@ -80,7 +80,7 @@ To make sure peanut is running, Run the following from your laptop to run some r
 
 ```zsh
 # To provision redis services for 10 minutes
-$ curl -X POST http://$PUBLIC_IP:8000/api/v1/service -d '{"service":"redis","configs": {},"deleteAfter":"10min"}' -H 'x-api-key: ~api~key~here~'
+$ curl -X POST http://$PUBLIC_IP/api/v1/service -d '{"service":"redis","configs": {},"deleteAfter":"10min"}' -H 'x-api-key: ~api~key~here~'
 
 {
   "createdAt": "2021-07-11T09:58:11.076Z",
@@ -92,7 +92,7 @@ $ curl -X POST http://$PUBLIC_IP:8000/api/v1/service -d '{"service":"redis","con
 
 
 # To list services including the host and port to use for connection
-$ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key: ~api~key~here~'
+$ curl -X GET http://$PUBLIC_IP/api/v1/service  -H 'x-api-key: ~api~key~here~'
 
 {
   "services": [
@@ -122,6 +122,12 @@ $ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key: ~api~key~her
     }
   ]
 }
+```
+
+There is also a script to upgrade peanut.
+
+```zsh
+$ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/upgrade.sh)
 ```
 
 
