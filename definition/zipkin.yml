@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-   etcd:
+   zipkin:
       image: 'openzipkin/zipkin:2.23'
       ports:
          - '9411'

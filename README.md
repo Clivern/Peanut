@@ -44,6 +44,7 @@ Supported Services:
 - Elasticsearch.
 - Graphite.
 - Prometheus.
+- Zipkin.
 
 
 ## Documentation
@@ -358,6 +359,14 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 # Configs can be provided as base64 encoded string (use https://www.base64encode.org/)
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"prometheus", "configs": {"configsBase64Encoded": "Z2xvYmFsOgogIGV2YWx1YXRpb25faW50ZXJ2YWw6IDE1cwogIHNjcmFwZV9pbnRlcnZhbDogMTVzCnJ1bGVfZmlsZXM6IH4Kc2NyYXBlX2NvbmZpZ3M6CiAgLQogICAgam9iX25hbWU6IHByb21ldGhlCiAgICBzY3JhcGVfaW50ZXJ2YWw6IDVzCiAgICBzdGF0aWNfY29uZmlnczoKICAgICAgLQogICAgICAgIHRhcmdldHM6CiAgICAgICAgICAtICJsb2NhbGhvc3Q6OTA5MCI="}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Zipkin
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"zipkin"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 
