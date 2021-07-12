@@ -53,7 +53,7 @@ Supported Services:
 To run peanut on ubuntu, You can use the following bash script since it may take a while for a cold start. the script will install etcd, docker, docker-compose and peanut.
 
 ```zsh
-$ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/ubuntu.sh)
+$ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/install.sh)
 
 # Get The Public IP
 $ curl https://ipinfo.io/ip
