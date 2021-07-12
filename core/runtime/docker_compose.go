@@ -284,6 +284,22 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 			definition.PrometheusPort,
 			def,
 		)
+	} else if definition.ZipkinService == service {
+		// Deploy Zipkin
+		def = definition.GetZipkinConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.ZipkinPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
 	}
 
 	return dynamicConfigs, nil
@@ -346,6 +362,10 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 			serviceID,
 			fmt.Sprintf("%s/%s.prometheus.yml", util.RemoveTrailingSlash(viper.GetString("app.storage.path")), serviceID),
 		)
+
+	} else if definition.ZipkinService == service {
+		// Get Zipkin Definition
+		def = definition.GetZipkinConfig(serviceID)
 
 	}
 

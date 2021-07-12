@@ -92,6 +92,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.ElasticSearchService,
 		definition.GraphiteService,
 		definition.PrometheusService,
+		definition.ZipkinService,
 	}
 
 	if !util.InArray(message.Service, allowed) {
