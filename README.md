@@ -28,7 +28,7 @@
     <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.21" width="80%" />
 </p>
 
-Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines where mocking is not possible and test drives.
+Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for development, manual testing, automated testing pipelines where mocking is not possible and test drives.
 
 Under the hood, it works with the containerization runtime like docker to deploy and configure the service. Destroy the service if it is a temporary one.
 
