@@ -91,6 +91,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.MySQLService,
 		definition.ElasticSearchService,
 		definition.GraphiteService,
+		definition.PrometheusService,
 	}
 
 	if !util.InArray(message.Service, allowed) {

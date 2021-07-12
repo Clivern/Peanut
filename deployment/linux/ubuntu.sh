@@ -73,7 +73,7 @@ function peanut {
 
     apt-get install jq -y
 
-    mkdir -p /etc/peanut
+    mkdir -p /etc/peanut/storage
 
     cd /etc/peanut
 
@@ -87,7 +87,7 @@ Description=Peanut
 Documentation=https://github.com/clivern/peanut
 
 [Service]
-ExecStart=/etc/peanut/peanut api -c /etc/peanut/config.dist.yml
+ExecStart=/etc/peanut/peanut api -c /etc/peanut/config.prod.yml
 Restart=on-failure
 RestartSec=2
 

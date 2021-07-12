@@ -247,6 +247,43 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.PrometheusService == service {
+		// Get Prometheus Definition
+		dynamicConfigs["configsBase64Encoded"] = util.GetVal(configs, "configsBase64Encoded", definition.PrometheusDefaultConfig)
+
+		// Base64 decode configs
+		plainConfigs, err := util.Base64Decode(dynamicConfigs["configsBase64Encoded"])
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		// Store Prometheus config file in peanut local storage & mount later
+		err = util.StoreFile(
+			fmt.Sprintf("%s/%s.prometheus.yml", util.RemoveTrailingSlash(viper.GetString("app.storage.path")), serviceID),
+			plainConfigs,
+		)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		def = definition.GetPrometheusConfig(
+			serviceID,
+			fmt.Sprintf("%s/%s.prometheus.yml", util.RemoveTrailingSlash(viper.GetString("app.storage.path")), serviceID),
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(
+			serviceID,
+			definition.PrometheusPort,
+			def,
+		)
 	}
 
 	return dynamicConfigs, nil
@@ -302,6 +339,13 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 	} else if definition.GraphiteService == service {
 		// Get Graphite Definition
 		def = definition.GetGraphiteConfig(serviceID)
+
+	} else if definition.PrometheusService == service {
+		// Get Prometheus Definition
+		def = definition.GetPrometheusConfig(
+			serviceID,
+			fmt.Sprintf("%s/%s.prometheus.yml", util.RemoveTrailingSlash(viper.GetString("app.storage.path")), serviceID),
+		)
 
 	}
 

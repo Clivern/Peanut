@@ -1,16 +1,26 @@
 # App configs
 app:
     # Env mode (dev or prod)
-    mode: ${PEANUT_APP_MODE:-dev}
+    mode: ${PEANUT_APP_MODE:-prod}
     # HTTP port
-    port: ${PEANUT_API_PORT:-8000}
-    # URL
-    url: ${PEANUT_API_URL:-http://127.0.0.1:8000}
+    port: ${PEANUT_API_PORT:-80}
+    # Hostname
+    hostname: ${PEANUT_API_HOSTNAME:-127.0.0.1}
     # TLS configs
     tls:
         status: ${PEANUT_API_TLS_STATUS:-off}
         pemPath: ${PEANUT_API_TLS_PEMPATH:-cert/server.pem}
         keyPath: ${PEANUT_API_TLS_KEYPATH:-cert/server.key}
+
+    # Containerization runtime (supported docker)
+    containerization: ${PEANUT_CONTAINERIZATION_RUNTIME:-docker}
+
+    # App Storage
+    storage:
+        # Type (only local supported)
+        type: ${PEANUT_STORAGE_TYPE:-local}
+        # Local Path
+        path: ${PEANUT_STORAGE_PATH:-/etc/peanut/storage}
 
     # API Configs
     api:
@@ -52,6 +62,6 @@ app:
         # Log level, it can be debug, info, warn, error, panic, fatal
         level: ${PEANUT_LOG_LEVEL:-info}
         # Output can be stdout or abs path to log file /var/logs/peanut.log
-        output: ${PEANUT_LOG_OUTPUT:-stdout}
+        output: ${PEANUT_LOG_OUTPUT:-/var/logs/peanut.log}
         # Format can be json
         format: ${PEANUT_LOG_FORMAT:-json}

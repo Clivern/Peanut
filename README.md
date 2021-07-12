@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.1.20" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.1.21" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -10,16 +10,13 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.20-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.21-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.20">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.21">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
-        </a>
-        <a href="https://hub.docker.com/r/clivern/peanut">
-            <img src="https://img.shields.io/badge/Docker-Latest-green">
         </a>
         <a href="https://github.com/Clivern/Peanut/blob/master/LICENSE">
             <img src="https://img.shields.io/badge/LICENSE-MIT-orange.svg">
@@ -28,7 +25,7 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.20" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.21" width="80%" />
 </p>
 
 Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for developmenet, manual testing, automated testing pipelines where mocking is not possible and test drives.
@@ -46,6 +43,7 @@ Supported Services:
 - Grafana.
 - Elasticsearch.
 - Graphite.
+- Prometheus.
 
 
 ## Documentation
@@ -55,14 +53,14 @@ Supported Services:
 To run peanut on ubuntu, You can use the following bash script since it may take a while for a cold start. the script will install etcd, docker, docker-compose and peanut.
 
 ```zsh
-$ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/ubuntu_20_04.sh)
+$ bash < <(curl -s https://raw.githubusercontent.com/Clivern/Peanut/main/deployment/linux/ubuntu.sh)
 
 # Get The Public IP
 $ curl https://ipinfo.io/ip
-X.X.X.X
+x.x.x.x
 ```
 
-Peanut will be running on `8000` port by default and UI on this URL `http://X.X.X.X:8000`. Please open this file `/etc/peanut/config.dist.yml` and adjust the following line to be your `Public IP` or `hostname`
+Peanut will be running on `80` port and UI on this URL `http://x.x.x.x`. Please open this file `/etc/peanut/config.prod.yml` and adjust the following line to be your `Public IP` or `hostname`
 
 ```zsh
 # App configs
@@ -82,7 +80,7 @@ To make sure peanut is running, Run the following from your laptop to run some r
 
 ```zsh
 # To provision redis services for 10 minutes
-$ curl -X POST http://$PUBLIC_IP:8000/api/v1/service -d '{"service":"redis","configs": {},"deleteAfter":"10min"}' -H 'x-api-key:6c68b836-6f8e-465e-b59f-89c1db53afca'
+$ curl -X POST http://$PUBLIC_IP:8000/api/v1/service -d '{"service":"redis","configs": {},"deleteAfter":"10min"}' -H 'x-api-key: ~api~key~here~'
 
 {
   "createdAt": "2021-07-11T09:58:11.076Z",
@@ -94,7 +92,7 @@ $ curl -X POST http://$PUBLIC_IP:8000/api/v1/service -d '{"service":"redis","con
 
 
 # To list services including the host and port to use for connection
-$ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key:6c68b836-6f8e-465e-b59f-89c1db53afca'
+$ curl -X GET http://$PUBLIC_IP:8000/api/v1/service  -H 'x-api-key: ~api~key~here~'
 
 {
   "services": [
@@ -230,7 +228,7 @@ $ peanut api -c /path/to/config.yml
 Deploy your first redis server!
 
 ```zsh
-$ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"service":"redis"}' -H 'x-api-key:6c68b836-6f8e-465e-b59f-89c1db53afca'
+$ curl -X POST http://127.0.0.1:8000/api/v1/service -d '{"service":"redis"}' -H 'x-api-key: ~api~key~here~'
 ```
 
 
@@ -341,6 +339,19 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"graphite"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Prometheus
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"prometheus"}' \
+    -H 'x-api-key: ~api~key~here~'
+
+# Configs can be provided as base64 encoded string (use https://www.base64encode.org/)
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"prometheus", "configs": {"configsBase64Encoded": "Z2xvYmFsOgogIGV2YWx1YXRpb25faW50ZXJ2YWw6IDE1cwogIHNjcmFwZV9pbnRlcnZhbDogMTVzCnJ1bGVfZmlsZXM6IH4Kc2NyYXBlX2NvbmZpZ3M6CiAgLQogICAgam9iX25hbWU6IHByb21ldGhlCiAgICBzY3JhcGVfaW50ZXJ2YWw6IDVzCiAgICBzdGF0aWNfY29uZmlnczoKICAgICAgLQogICAgICAgIHRhcmdldHM6CiAgICAgICAgICAtICJsb2NhbGhvc3Q6OTA5MCI="}}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 

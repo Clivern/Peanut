@@ -5,6 +5,7 @@
 package util
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -261,4 +262,15 @@ func TimeInSec(period string) int {
 	} else {
 		return 0
 	}
+}
+
+// Base64Decode decodes 64 encoded string
+func Base64Decode(encoded string) (string, error) {
+	result, err := base64.StdEncoding.DecodeString(encoded)
+	return string(result), err
+}
+
+// Base64Encode encodes a string
+func Base64Encode(text string) string {
+	return base64.StdEncoding.EncodeToString([]byte(text))
 }
