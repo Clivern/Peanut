@@ -139,6 +139,52 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.PostgreSQLService == service {
+		// Deploy Postgresql
+		dynamicConfigs["database"] = util.GetVal(configs, "database", definition.PostgreSQLDefaultDatabase)
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.PostgreSQLDefaultUsername)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.PostgreSQLDefaultPassword)
+
+		def = definition.GetPostgreSQLConfig(
+			serviceID,
+			dynamicConfigs["database"],
+			dynamicConfigs["username"],
+			dynamicConfigs["password"],
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.PostgreSQLPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+	} else if definition.MongoDBService == service {
+		// Deploy MongoDB
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MongoDBRootUsername)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.MongoDBRootPassword)
+
+		def = definition.GetMongoDBConfig(
+			serviceID,
+			dynamicConfigs["username"],
+			dynamicConfigs["password"],
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.MongoDBPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	} else if definition.ElasticSearchService == service {
 		// Deploy ElasticSearch
 		def = definition.GetElasticSearchConfig(serviceID)
@@ -300,6 +346,125 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 			return dynamicConfigs, err
 		}
 
+	} else if definition.MemcachedService == service {
+		// Deploy Memcached
+		def = definition.GetMemcachedConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.MemcachedPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+	} else if definition.MailhogService == service {
+		// Deploy Mailhog
+		def = definition.GetMailhogConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["smtpPort"], err = d.fetchServicePort(serviceID, definition.MailhogSMTPPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort"], err = d.fetchServicePort(serviceID, definition.MailhogHTTPPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+	} else if definition.JaegerService == service {
+		// Deploy Jaeger
+		def = definition.GetJaegerConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["udpPort1"], err = d.fetchServicePort(serviceID, definition.JaegerUDPPort1, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["udpPort2"], err = d.fetchServicePort(serviceID, definition.JaegerUDPPort2, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["udpPort3"], err = d.fetchServicePort(serviceID, definition.JaegerUDPPort3, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort1"], err = d.fetchServicePort(serviceID, definition.JaegerHTTPPort1, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort2"], err = d.fetchServicePort(serviceID, definition.JaegerHTTPPort2, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort3"], err = d.fetchServicePort(serviceID, definition.JaegerHTTPPort3, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort4"], err = d.fetchServicePort(serviceID, definition.JaegerHTTPPort4, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["httpPort5"], err = d.fetchServicePort(serviceID, definition.JaegerHTTPPort5, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+	} else if definition.RabbitMQService == service {
+		// Deploy RabbitMQ
+		def = definition.GetRabbitMQConfig(serviceID)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["username"] = definition.RabbitMQDefaultUsername
+
+		dynamicConfigs["password"] = definition.RabbitMQDefaultPassword
+
+		dynamicConfigs["amqpPort"], err = d.fetchServicePort(serviceID, definition.RabbitMQAMQPPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["dashboardPort"], err = d.fetchServicePort(serviceID, definition.RabbitMQDashboardPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -348,6 +513,23 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 			util.GetVal(configs, "password", definition.MySQLDefaultPassword),
 		)
 
+	} else if definition.PostgreSQLService == service {
+		// Get PostgreSQL Definition
+		def = definition.GetPostgreSQLConfig(
+			serviceID,
+			util.GetVal(configs, "database", definition.PostgreSQLDefaultDatabase),
+			util.GetVal(configs, "username", definition.PostgreSQLDefaultUsername),
+			util.GetVal(configs, "password", definition.PostgreSQLDefaultPassword),
+		)
+
+	} else if definition.MongoDBService == service {
+		// Get MongoDB Definition
+		def = definition.GetMongoDBConfig(
+			serviceID,
+			util.GetVal(configs, "username", definition.MongoDBRootUsername),
+			util.GetVal(configs, "password", definition.MongoDBRootPassword),
+		)
+
 	} else if definition.ElasticSearchService == service {
 		// Get ElasticSearch Definition
 		def = definition.GetElasticSearchConfig(serviceID)
@@ -366,6 +548,22 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 	} else if definition.ZipkinService == service {
 		// Get Zipkin Definition
 		def = definition.GetZipkinConfig(serviceID)
+
+	} else if definition.MemcachedService == service {
+		// Get Memcached Definition
+		def = definition.GetMemcachedConfig(serviceID)
+
+	} else if definition.MailhogService == service {
+		// Get Mailhog Definition
+		def = definition.GetMailhogConfig(serviceID)
+
+	} else if definition.JaegerService == service {
+		// Get Jaeger Definition
+		def = definition.GetJaegerConfig(serviceID)
+
+	} else if definition.RabbitMQService == service {
+		// Get RabbitMQ Definition
+		def = definition.GetRabbitMQConfig(serviceID)
 
 	}
 

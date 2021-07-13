@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.1.22" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.1.23" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.1.22-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.1.23-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.22">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.1.23">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -25,7 +25,7 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.22" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.1.23" width="80%" />
 </p>
 
 Peanut provides an API and a command line tool to deploy and configure the commonly used services like databases, message brokers, graphing tools ... etc. It perfectly suited for development, manual testing, automated testing pipelines where mocking is not possible and test drives.
@@ -38,13 +38,19 @@ Supported Services:
 
 - MySQL.
 - MariaDB.
+- PostgreSQL.
 - Redis.
 - Etcd.
 - Grafana.
 - Elasticsearch.
+- MongoDB.
 - Graphite.
 - Prometheus.
 - Zipkin.
+- Memcached.
+- Mailhog.
+- Jaeger.
+- RabbitMQ.
 
 
 ## Documentation
@@ -293,7 +299,7 @@ In order to interact with peanut API server, you can either do basic API calls o
 
 Here is a list of all supported services so far and the API call to deploy them.
 
-- MySQL
+- MySQL.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -301,7 +307,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- MariaDB
+- MariaDB.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -309,7 +315,15 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Redis
+- PostgreSQL.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"postgresql","configs": {"database": "peanut", "username": "peanut", "password": "secret"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Redis.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -317,7 +331,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Etcd
+- Etcd.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -325,7 +339,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Grafana
+- Grafana.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -333,7 +347,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Elasticsearch
+- Elasticsearch.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -341,7 +355,15 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Graphite
+- MongoDB.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"grafana","configs": {"username": "admin", "password": "admin"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Graphite.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -349,7 +371,7 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Prometheus
+- Prometheus.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
@@ -362,11 +384,43 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Zipkin
+- Zipkin.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"zipkin"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Memcached.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"memcached"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Mailhog.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"mailhog"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Jaeger.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"jaeger"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- RabbitMQ.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"rabbitmq"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+
+   mongodb:
+      image: 'mongo:5.0.0-rc7'
+      environment:
+         - MONGO_INITDB_ROOT_USERNAME=root
+         - MONGO_INITDB_ROOT_PASSWORD=secret
+      ports:
+         - '27017'
+      restart: unless-stopped

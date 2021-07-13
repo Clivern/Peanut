@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+   jaeger:
+    image: 'jaegertracing/all-in-one:1.24'
+      ports:
+         # udp
+         - '6831'
+         - '16686'
+      restart: unless-stopped

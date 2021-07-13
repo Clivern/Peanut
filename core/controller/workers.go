@@ -93,6 +93,12 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.GraphiteService,
 		definition.PrometheusService,
 		definition.ZipkinService,
+		definition.MemcachedService,
+		definition.MailhogService,
+		definition.JaegerService,
+		definition.PostgreSQLService,
+		definition.MongoDBService,
+		definition.RabbitMQService,
 	}
 
 	if !util.InArray(message.Service, allowed) {

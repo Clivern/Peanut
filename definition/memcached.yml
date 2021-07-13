@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+
+   memcached:
+      image: 'memcached:1.6.9'
+      ports:
+         - '11211'
+      restart: unless-stopped
