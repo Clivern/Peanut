@@ -18,24 +18,26 @@ func TestUnitMongoDB(t *testing.T) {
 
 	g.Describe("#TestMongoDB", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			mongodb := GetMongoDBConfig("mongodb", "user", "pass")
+			mongodb := GetMongoDBConfig("mongodb", "db", "user", "pass")
 			result, err := mongodb.ToString()
 
 			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MongoDBDockerImage))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MongoDBPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MongoDBRestartPolicy))).Equal(true)
+			g.Assert(strings.Contains(result, "MONGO_INITDB_DATABASE=db")).Equal(true)
 			g.Assert(strings.Contains(result, "MONGO_INITDB_ROOT_USERNAME=user")).Equal(true)
 			g.Assert(strings.Contains(result, "MONGO_INITDB_ROOT_PASSWORD=pass")).Equal(true)
 			g.Assert(err).Equal(nil)
 
-			mongodb = GetMongoDBConfig("mongodb", "", "")
+			mongodb = GetMongoDBConfig("mongodb", "", "", "")
 			result, err = mongodb.ToString()
 
 			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MongoDBDockerImage))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MongoDBPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MongoDBRestartPolicy))).Equal(true)
-			g.Assert(strings.Contains(result, fmt.Sprintf("MONGO_INITDB_ROOT_USERNAME=%s", MongoDBRootUsername))).Equal(true)
-			g.Assert(strings.Contains(result, fmt.Sprintf("MONGO_INITDB_ROOT_PASSWORD=%s", MongoDBRootPassword))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("MONGO_INITDB_DATABASE=%s", MongoDBDefaultDatabase))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("MONGO_INITDB_ROOT_USERNAME=%s", MongoDBDefaultUsername))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("MONGO_INITDB_ROOT_PASSWORD=%s", MongoDBDefaultPassword))).Equal(true)
 			g.Assert(err).Equal(nil)
 		})
 	})

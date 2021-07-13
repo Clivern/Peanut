@@ -165,11 +165,13 @@ func (d *DockerCompose) Deploy(serviceID, service string, configs map[string]str
 		}
 	} else if definition.MongoDBService == service {
 		// Deploy MongoDB
-		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MongoDBRootUsername)
-		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.MongoDBRootPassword)
+		dynamicConfigs["database"] = util.GetVal(configs, "database", definition.MongoDBDefaultDatabase)
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MongoDBDefaultUsername)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.MongoDBDefaultPassword)
 
 		def = definition.GetMongoDBConfig(
 			serviceID,
+			dynamicConfigs["database"],
 			dynamicConfigs["username"],
 			dynamicConfigs["password"],
 		)
@@ -526,8 +528,9 @@ func (d *DockerCompose) Destroy(serviceID, service string, configs map[string]st
 		// Get MongoDB Definition
 		def = definition.GetMongoDBConfig(
 			serviceID,
-			util.GetVal(configs, "username", definition.MongoDBRootUsername),
-			util.GetVal(configs, "password", definition.MongoDBRootPassword),
+			util.GetVal(configs, "database", definition.MongoDBDefaultDatabase),
+			util.GetVal(configs, "username", definition.MongoDBDefaultUsername),
+			util.GetVal(configs, "password", definition.MongoDBDefaultPassword),
 		)
 
 	} else if definition.ElasticSearchService == service {

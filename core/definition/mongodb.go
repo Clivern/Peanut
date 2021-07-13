@@ -21,23 +21,30 @@ const (
 	// MongoDBRestartPolicy const
 	MongoDBRestartPolicy = "unless-stopped"
 
-	// MongoDBRootUsername const
-	MongoDBRootUsername = "peanut"
+	// MongoDBDefaultDatabase const
+	MongoDBDefaultDatabase = "peanut"
 
-	// MongoDBRootPassword const
-	MongoDBRootPassword = "secret"
+	// MongoDBDefaultUsername const
+	MongoDBDefaultUsername = "peanut"
+
+	// MongoDBDefaultPassword const
+	MongoDBDefaultPassword = "secret"
 )
 
 // GetMongoDBConfig gets yaml definition object
-func GetMongoDBConfig(name, username, password string) DockerComposeConfig {
+func GetMongoDBConfig(name, database, username, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 
+	if database == "" {
+		database = MongoDBDefaultDatabase
+	}
+
 	if username == "" {
-		username = MongoDBRootUsername
+		username = MongoDBDefaultUsername
 	}
 
 	if password == "" {
-		password = MongoDBRootPassword
+		password = MongoDBDefaultPassword
 	}
 
 	services[name] = Service{
@@ -45,6 +52,7 @@ func GetMongoDBConfig(name, username, password string) DockerComposeConfig {
 		Restart: MongoDBRestartPolicy,
 		Ports:   []string{MongoDBPort},
 		Environment: []string{
+			fmt.Sprintf("MONGO_INITDB_DATABASE=%s", database),
 			fmt.Sprintf("MONGO_INITDB_ROOT_USERNAME=%s", username),
 			fmt.Sprintf("MONGO_INITDB_ROOT_PASSWORD=%s", password),
 		},
