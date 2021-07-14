@@ -1,0 +1,142 @@
+version: '3'
+
+services:
+    elasticsearch:
+        image: 'docker.elastic.co/elasticsearch/elasticsearch:7.13.3'
+        environment:
+            - discovery.type=single-node
+        ports:
+            - '9200'
+            - '9300'
+        restart: unless-stopped
+
+    etcd:
+        image: 'bitnami/etcd:3.5.0'
+        environment:
+            - ALLOW_NONE_AUTHENTICATION=yes
+        ports:
+            - '2379'
+        restart: unless-stopped
+
+    grafana:
+        image: 'grafana/grafana:8.0.4'
+        environment:
+            - 'GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}'
+            - 'GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}'
+            - GF_USERS_ALLOW_SIGN_UP=false
+        ports:
+            - '3000'
+        restart: unless-stopped
+
+    graphite:
+        image: 'graphiteapp/graphite-statsd:1.1.7-11'
+        ports:
+            - '80'
+            - 2003-2004
+            - 2023-2024
+            - '8125'
+            - '8126'
+        restart: unless-stopped
+
+    jaeger:
+        image: 'jaegertracing/all-in-one:1.24'
+        ports:
+            - '6831'
+            - '16686'
+        restart: unless-stopped
+
+    mailhog:
+        image: 'mailhog/mailhog:v1.0.1'
+        ports:
+            - '1025'
+            - '8025'
+
+    mariadb:
+        image: 'mariadb:10.6.2'
+        ports:
+            - 3306
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=peanut
+            - MYSQL_USER=peanut
+            - MYSQL_PASSWORD=secret
+            - MYSQL_ALLOW_EMPTY_PASSWORD=no
+        restart: unless-stopped
+
+    memcached:
+        image: 'memcached:1.6.9'
+        ports:
+            - '11211'
+        restart: unless-stopped
+
+    minio:
+        image: 'minio/minio:RELEASE.2021-06-17T00-10-46Z-28-gac7697426'
+        command: 'server /data --console-address ":9001"'
+        environment:
+            - MINIO_ROOT_USER=peanut
+            - MINIO_ROOT_PASSWORD=secret
+        ports:
+            - '9000'
+            - '9001'
+        restart: unless-stopped
+
+    mongodb:
+        image: 'mongo:5.0.0-rc7'
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=root
+            - MONGO_INITDB_DATABASE=peanut
+        ports:
+            - '27017'
+        restart: unless-stopped
+
+    mysql:
+        image: 'mysql:8.0'
+        ports:
+            - 3306
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=peanut
+            - MYSQL_USER=peanut
+            - MYSQL_PASSWORD=secret
+            - MYSQL_ALLOW_EMPTY_PASSWORD=no
+        restart: unless-stopped
+
+    postgres:
+        image: 'postgres:13.3'
+        ports:
+            - 5432
+        environment:
+            - POSTGRES_USER=dbuser
+            - POSTGRES_PASSWORD=dbpass
+            - POSTGRES_DB=dbname
+        restart: unless-stopped
+
+    prometheus:
+        image: 'prom/prometheus:v2.28.1'
+        volumes:
+            - '/root/prometheus.yml:/etc/prometheus/prometheus.yml'
+        ports:
+            - '9090'
+        restart: unless-stopped
+
+    rabbitmq:
+        image: 'rabbitmq:3.8-management'
+        ports:
+            - '5672'
+            - '15672'
+        restart: unless-stopped
+
+    redis:
+        image: 'bitnami/redis:6.2.4'
+        ports:
+            - 6379
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+        restart: unless-stopped
+
+    zipkin:
+        image: 'openzipkin/zipkin:2.23'
+        ports:
+            - '9411'
+        restart: unless-stopped
