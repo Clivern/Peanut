@@ -16,7 +16,10 @@ const (
 	MariaDBPort = "3306"
 
 	// MariaDBDockerImage const
-	MariaDBDockerImage = "mariadb:10.6.2"
+	MariaDBDockerImage = "mariadb"
+
+	// MariaDBDockerImageVersion const
+	MariaDBDockerImageVersion = "10.6.2"
 
 	// MariaDBRestartPolicy const
 	MariaDBRestartPolicy = "unless-stopped"
@@ -35,7 +38,7 @@ const (
 )
 
 // GetMariaDBConfig gets yaml definition object
-func GetMariaDBConfig(name, rootPassword, database, username, password string) DockerComposeConfig {
+func GetMariaDBConfig(name, version, rootPassword, database, username, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	if rootPassword == "" {
@@ -54,8 +57,12 @@ func GetMariaDBConfig(name, rootPassword, database, username, password string) D
 		password = MariaDBDefaultPassword
 	}
 
+	if version == "" {
+		version = MariaDBDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   MariaDBDockerImage,
+		Image:   fmt.Sprintf("%s:%s", MariaDBDockerImage, version),
 		Restart: MariaDBRestartPolicy,
 		Ports:   []string{MariaDBPort},
 		Environment: []string{

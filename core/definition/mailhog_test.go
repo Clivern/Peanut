@@ -18,10 +18,10 @@ func TestUnitMailhog(t *testing.T) {
 
 	g.Describe("#TestMailhog", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			mailhog := GetMailhogConfig("mailhog")
+			mailhog := GetMailhogConfig("mailhog", "")
 			result, err := mailhog.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", MailhogDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", MailhogDockerImage, MailhogDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MailhogSMTPPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, MailhogHTTPPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", MailhogRestartPolicy))).Equal(true)

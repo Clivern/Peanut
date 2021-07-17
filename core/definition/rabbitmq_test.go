@@ -18,10 +18,10 @@ func TestUnitRabbitMQ(t *testing.T) {
 
 	g.Describe("#TestRabbitMQ", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			rabbitmq := GetRabbitMQConfig("rabbitmq")
+			rabbitmq := GetRabbitMQConfig("rabbitmq", "")
 			result, err := rabbitmq.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", RabbitMQDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", RabbitMQDockerImage, RabbitMQDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, RabbitMQAMQPPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, RabbitMQDashboardPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", RabbitMQRestartPolicy))).Equal(true)

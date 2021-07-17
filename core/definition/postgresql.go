@@ -16,7 +16,10 @@ const (
 	PostgreSQLPort = "5432"
 
 	// PostgreSQLDockerImage const
-	PostgreSQLDockerImage = "postgres:13.3"
+	PostgreSQLDockerImage = "postgres"
+
+	// PostgreSQLDockerImageVersion const
+	PostgreSQLDockerImageVersion = "13.3"
 
 	// PostgreSQLRestartPolicy const
 	PostgreSQLRestartPolicy = "unless-stopped"
@@ -32,7 +35,7 @@ const (
 )
 
 // GetPostgreSQLConfig gets yaml definition object
-func GetPostgreSQLConfig(name, database, username, password string) DockerComposeConfig {
+func GetPostgreSQLConfig(name, version, database, username, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	if database == "" {
@@ -47,8 +50,12 @@ func GetPostgreSQLConfig(name, database, username, password string) DockerCompos
 		password = PostgreSQLDefaultPassword
 	}
 
+	if version == "" {
+		version = PostgreSQLDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   PostgreSQLDockerImage,
+		Image:   fmt.Sprintf("%s:%s", PostgreSQLDockerImage, version),
 		Restart: PostgreSQLRestartPolicy,
 		Ports:   []string{PostgreSQLPort},
 		Environment: []string{

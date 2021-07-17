@@ -18,10 +18,10 @@ func TestUnitElasticSearch(t *testing.T) {
 
 	g.Describe("#TestElasticSearch", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			elasticsearch := GetElasticSearchConfig("elasticsearch")
+			elasticsearch := GetElasticSearchConfig("elasticsearch", "")
 			result, err := elasticsearch.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", ElasticSearchDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", ElasticSearchDockerImage, ElasticSearchDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, ElasticSearchRequestsPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, ElasticSearchCommunicationPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", ElasticSearchRestartPolicy))).Equal(true)

@@ -18,10 +18,10 @@ func TestUnitEtcd(t *testing.T) {
 
 	g.Describe("#TestEtcd", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			etcd := GetEtcdConfig("etcd")
+			etcd := GetEtcdConfig("etcd", "")
 			result, err := etcd.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", EtcdDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", EtcdDockerImage, EtcdDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, EtcdPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", EtcdRestartPolicy))).Equal(true)
 			g.Assert(strings.Contains(result, "ALLOW_NONE_AUTHENTICATION=yes")).Equal(true)

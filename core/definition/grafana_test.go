@@ -18,10 +18,10 @@ func TestUnitGrafana(t *testing.T) {
 
 	g.Describe("#TestGrafana", func() {
 		g.It("It should satisfy all provided test cases", func() {
-			grafana := GetGrafanaConfig("grafana", "grafana1", "grafana2", "true", "true")
+			grafana := GetGrafanaConfig("grafana", "", "grafana1", "grafana2", "true", "true")
 			result, err := grafana.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", GrafanaDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", GrafanaDockerImage, GrafanaDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, GrafanaPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", GrafanaRestartPolicy))).Equal(true)
 
@@ -31,10 +31,10 @@ func TestUnitGrafana(t *testing.T) {
 			g.Assert(strings.Contains(result, "GF_AUTH_ANONYMOUS_ENABLED=true")).Equal(true)
 			g.Assert(err).Equal(nil)
 
-			grafana = GetGrafanaConfig("grafana", "", "", "", "")
+			grafana = GetGrafanaConfig("grafana", "", "", "", "", "")
 			result, err = grafana.ToString()
 
-			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", GrafanaDockerImage))).Equal(true)
+			g.Assert(strings.Contains(result, fmt.Sprintf("image: %s", fmt.Sprintf("%s:%s", GrafanaDockerImage, GrafanaDockerImageVersion)))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf(`- "%s"`, GrafanaPort))).Equal(true)
 			g.Assert(strings.Contains(result, fmt.Sprintf("restart: %s", GrafanaRestartPolicy))).Equal(true)
 

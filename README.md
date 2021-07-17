@@ -61,6 +61,8 @@ Supported Services:
 - Mailhog.
 - Jaeger.
 - RabbitMQ.
+- Consul.
+- Vault.
 
 
 ## Documentation
@@ -433,6 +435,23 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"rabbitmq"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
+
+- Consul.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"consul"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Vault.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"vault","configs": {"token": "peanut"}}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
 
 To create a temporary service, you will need to add extra parameter while creating it.
 

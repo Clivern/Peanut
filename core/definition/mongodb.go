@@ -16,7 +16,10 @@ const (
 	MongoDBPort = "27017"
 
 	// MongoDBDockerImage const
-	MongoDBDockerImage = "mongo:5.0.0-rc7"
+	MongoDBDockerImage = "mongo"
+
+	// MongoDBDockerImageVersion const
+	MongoDBDockerImageVersion = "5.0.0-rc7"
 
 	// MongoDBRestartPolicy const
 	MongoDBRestartPolicy = "unless-stopped"
@@ -32,7 +35,7 @@ const (
 )
 
 // GetMongoDBConfig gets yaml definition object
-func GetMongoDBConfig(name, database, username, password string) DockerComposeConfig {
+func GetMongoDBConfig(name, version, database, username, password string) DockerComposeConfig {
 	services := make(map[string]Service)
 
 	if database == "" {
@@ -47,8 +50,12 @@ func GetMongoDBConfig(name, database, username, password string) DockerComposeCo
 		password = MongoDBDefaultPassword
 	}
 
+	if version == "" {
+		version = MongoDBDockerImageVersion
+	}
+
 	services[name] = Service{
-		Image:   MongoDBDockerImage,
+		Image:   fmt.Sprintf("%s:%s", MongoDBDockerImage, version),
 		Restart: MongoDBRestartPolicy,
 		Ports:   []string{MongoDBPort},
 		Environment: []string{

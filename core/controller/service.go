@@ -24,6 +24,7 @@ type ServicePayload struct {
 	Service     string            `json:"service"`
 	Configs     map[string]string `json:"configs"`
 	DeleteAfter string            `json:"deleteAfter"`
+	Version     string            `json:"version"`
 	CreatedAt   time.Time         `json:"createdAt"`
 	UpdatedAt   time.Time         `json:"updatedAt"`
 }
@@ -76,6 +77,7 @@ func GetServices(c *gin.Context) {
 			Service:     v.Service,
 			Configs:     v.Configs,
 			DeleteAfter: v.DeleteAfter,
+			Version:     v.Version,
 			CreatedAt:   time.Unix(v.CreatedAt, 0),
 			UpdatedAt:   time.Unix(v.UpdatedAt, 0),
 		})
@@ -141,6 +143,7 @@ func GetService(c *gin.Context) {
 		"service":     serviceData.Service,
 		"configs":     serviceData.Configs,
 		"deleteAfter": serviceData.DeleteAfter,
+		"version":     serviceData.Version,
 		"createdAt":   time.Unix(serviceData.CreatedAt, 0),
 		"updatedAt":   time.Unix(serviceData.UpdatedAt, 0),
 	})

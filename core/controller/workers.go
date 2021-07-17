@@ -26,6 +26,7 @@ type Message struct {
 	JobID         string            `json:"jobId"`
 	ServiceID     string            `json:"serviceId"`
 	Service       string            `json:"service"`
+	Version       string            `json:"version"`
 	Configs       map[string]string `json:"configs"`
 	DeleteAfter   string            `json:"deleteAfter"`
 	Type          string            `json:"type"`
@@ -56,7 +57,7 @@ func NewWorkers() *Workers {
 	result.service = model.NewServiceStore(db)
 	result.broadcast = make(chan Message, viper.GetInt("app.workers.buffer"))
 
-	if viper.GetString("app.containerization") == "docker" {
+	if viper.GetString("app.containerization.driver") == "docker" {
 		result.containerization = runtime.NewDockerCompose()
 	} else {
 		panic("Invalid containerization runtime!")
@@ -99,6 +100,28 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.PostgreSQLService,
 		definition.MongoDBService,
 		definition.RabbitMQService,
+		definition.ConsulService,
+		definition.VaultService,
+	}
+
+	defaultTags := map[string]string{
+		definition.RedisService:         definition.RedisDockerImageVersion,
+		definition.EtcdService:          definition.EtcdDockerImageVersion,
+		definition.GrafanaService:       definition.GrafanaDockerImageVersion,
+		definition.MariaDBService:       definition.MariaDBDockerImageVersion,
+		definition.MySQLService:         definition.MySQLDockerImageVersion,
+		definition.ElasticSearchService: definition.ElasticSearchDockerImageVersion,
+		definition.GraphiteService:      definition.GraphiteDockerImageVersion,
+		definition.PrometheusService:    definition.PrometheusDockerImageVersion,
+		definition.ZipkinService:        definition.ZipkinDockerImageVersion,
+		definition.MemcachedService:     definition.MemcachedDockerImageVersion,
+		definition.MailhogService:       definition.MailhogDockerImageVersion,
+		definition.JaegerService:        definition.JaegerDockerImageVersion,
+		definition.PostgreSQLService:    definition.PostgreSQLDockerImageVersion,
+		definition.MongoDBService:       definition.MongoDBDockerImageVersion,
+		definition.RabbitMQService:      definition.RabbitMQDockerImageVersion,
+		definition.ConsulService:        definition.VaultDockerImageVersion,
+		definition.VaultService:         definition.ConsulDockerImageVersion,
 	}
 
 	if !util.InArray(message.Service, allowed) {
@@ -107,6 +130,11 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 			"errorMessage":  fmt.Sprintf("Error! Invalid service provided: %s", message.Service),
 		})
 		return
+	}
+
+	// Override version with the default one if not provided
+	if message.Version == "" {
+		message.Version = defaultTags[message.Service]
 	}
 
 	message.CorrelationID = c.GetHeader("x-correlation-id")
@@ -132,6 +160,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 			Service:     message.Service,
 			Configs:     message.Configs,
 			DeleteAfter: message.DeleteAfter,
+			Version:     message.Version,
 		},
 		Status: model.PendingStatus,
 	})
@@ -197,6 +226,7 @@ func (w *Workers) DestroyRequest(c *gin.Context) {
 			Service:     message.Service,
 			Configs:     message.Configs,
 			DeleteAfter: message.DeleteAfter,
+			Version:     message.Version,
 		},
 		Status: model.PendingStatus,
 	})
@@ -259,11 +289,11 @@ func (w *Workers) ProcessRequest(notifyChannel chan<- Message, wg *sync.WaitGrou
 		case "DeployRequest":
 			// Deploy the service
 			result := make(map[string]string)
-			result, err = w.containerization.Deploy(message.ServiceID, message.Service, message.Configs)
+			result, err = w.containerization.Deploy(message.ServiceID, message.Service, message.Version, message.Configs)
 			message.Configs = util.MergeMaps(message.Configs, result)
 		case "DestroyRequest":
 			// Destroy the service
-			err = w.containerization.Destroy(message.ServiceID, message.Service, message.Configs)
+			err = w.containerization.Destroy(message.ServiceID, message.Service, message.Version, message.Configs)
 		default:
 			log.WithFields(log.Fields{
 				"correlation_id": message.CorrelationID,
@@ -317,6 +347,7 @@ func (w *Workers) Finalize(notifyChannel <-chan Message) {
 				Service:     message.Service,
 				Configs:     message.Configs,
 				DeleteAfter: message.DeleteAfter,
+				Version:     message.Version,
 			})
 		case "DestroyRequest":
 			w.service.DeleteRecord(message.ServiceID)
@@ -356,6 +387,7 @@ func (w *Workers) Watch() {
 				Service:       v.Service,
 				Configs:       v.Configs,
 				DeleteAfter:   v.DeleteAfter,
+				Version:       v.Version,
 				CorrelationID: "",
 			}
 
@@ -367,6 +399,7 @@ func (w *Workers) Watch() {
 					Service:     message.Service,
 					Configs:     message.Configs,
 					DeleteAfter: message.DeleteAfter,
+					Version:     message.Version,
 				},
 				Status: model.PendingStatus,
 			})

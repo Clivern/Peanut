@@ -6,6 +6,6 @@ package runtime
 
 // Containerization interface
 type Containerization interface {
-	Deploy(serviceID, service string, configs map[string]string) (map[string]string, error)
-	Destroy(serviceID, service string, configs map[string]string) error
+	Deploy(serviceID, service, version string, configs map[string]string) (map[string]string, error)
+	Destroy(serviceID, service, version string, configs map[string]string) error
 }
