@@ -20,7 +20,7 @@ app:
         autoClean: ${PEANUT_CONTAINERIZATION_AUTO_CLEAN:-true}
 
         # Time to cache docker images tags
-        cacheTagsTimeInMinutes: ${PEANUT_CONTAINERIZATION_CACHE_TIME:-1440}
+        cacheTagsTimeInMinutes: ${PEANUT_CONTAINERIZATION_CACHE_TIME:-10080}
 
     # App Storage
     storage:
