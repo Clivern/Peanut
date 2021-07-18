@@ -11,11 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/clivern/peanut/core/definition"
 	"github.com/clivern/peanut/core/driver"
 	"github.com/clivern/peanut/core/model"
 	"github.com/clivern/peanut/core/service"
-	"github.com/clivern/peanut/core/util"
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -29,34 +27,6 @@ func GetTags(c *gin.Context) {
 	image := c.Param("image")
 	org := c.Param("org")
 	fromCache := c.Param("fromCache")
-
-	allowed := []string{
-		definition.RedisService,
-		definition.EtcdService,
-		definition.GrafanaService,
-		definition.MariaDBService,
-		definition.MySQLService,
-		definition.ElasticSearchService,
-		definition.GraphiteService,
-		definition.PrometheusService,
-		definition.ZipkinService,
-		definition.MemcachedService,
-		definition.MailhogService,
-		definition.JaegerService,
-		definition.PostgreSQLService,
-		definition.MongoDBService,
-		definition.RabbitMQService,
-		definition.ConsulService,
-		definition.VaultService,
-	}
-
-	if !util.InArray(image, allowed) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"correlationID": c.GetHeader("x-correlation-id"),
-			"errorMessage":  fmt.Sprintf("Error! Invalid image provided: %s", image),
-		})
-		return
-	}
 
 	gitHub := service.NewDockerHub(service.NewHTTPClient(20))
 

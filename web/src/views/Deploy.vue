@@ -10,6 +10,7 @@
 						placeholder="Select a service type"
 						expanded
 						v-model="form.type"
+						@input="onServiceChange()"
 					>
 						<option value="mysql">MySQL</option>
 						<option value="mariadb">MariaDB</option>
@@ -26,6 +27,23 @@
 						<option value="mailhog">Mailhog</option>
 						<option value="jaeger">Jaeger</option>
 						<option value="rabbitmq">RabbitMQ</option>
+						<option value="consul">Consul</option>
+						<option value="vault">Vault</option>
+					</b-select>
+				</b-field>
+
+				<b-field label="Version">
+					<b-select
+						placeholder="Select a service version"
+						expanded
+						v-model="form.version.selected"
+					>
+						<option
+							v-for="option in form.version.options"
+							v-bind:key="option.value"
+						>
+							{{ option.text }}
+						</option>
 					</b-select>
 				</b-field>
 
@@ -151,6 +169,12 @@
 					</b-field>
 				</template>
 
+				<template v-if="form.type == 'vault'">
+					<b-field label="Vault Root Token">
+						<b-input value="" v-model="form.configs.vault.token"></b-input>
+					</b-field>
+				</template>
+
 				<template v-if="form.type == 'prometheus'">
 					<b-field label="YAML Configs (please ensure it is valid)">
 						<b-input
@@ -187,9 +211,18 @@ export default {
 				delete_after_type: "",
 				delete_after_period: "",
 
+				version: {
+					selected: "",
+					options: [{ text: "Default", value: "" }],
+				},
+
 				configs: {
 					redis: {
 						password: "",
+					},
+					consul: {},
+					vault: {
+						token: "peanut",
 					},
 					mysql: {
 						rootPassword: "root",
@@ -249,6 +282,146 @@ export default {
 			return decodeURIComponent(escape(window.atob(str)));
 		},
 
+		onServiceChange() {
+			if (this.form.type == "") {
+				this.form.version = {
+					selected: "",
+					options: [{ text: "Default", value: "" }],
+				};
+				return;
+			}
+
+			this.loading();
+
+			let org = "library";
+			let service = "";
+
+			if (this.form.type == "redis") {
+				org = "bitnami";
+				service = "redis";
+			}
+
+			if (this.form.type == "consul") {
+				org = "library";
+				service = "consul";
+			}
+
+			if (this.form.type == "elasticsearch") {
+				org = "library";
+				service = "elasticsearch";
+			}
+
+			if (this.form.type == "etcd") {
+				org = "bitnami";
+				service = "etcd";
+			}
+
+			if (this.form.type == "grafana") {
+				org = "grafana";
+				service = "grafana";
+			}
+
+			if (this.form.type == "graphite") {
+				org = "graphiteapp";
+				service = "graphite-statsd";
+			}
+
+			if (this.form.type == "jaeger") {
+				org = "jaegertracing";
+				service = "all-in-one";
+			}
+
+			if (this.form.type == "mailhog") {
+				org = "mailhog";
+				service = "mailhog";
+			}
+
+			if (this.form.type == "mariadb") {
+				org = "library";
+				service = "mariadb";
+			}
+
+			if (this.form.type == "memcached") {
+				org = "library";
+				service = "memcached";
+			}
+
+			if (this.form.type == "mongodb") {
+				org = "library";
+				service = "mongo";
+			}
+
+			if (this.form.type == "mysql") {
+				org = "library";
+				service = "mysql";
+			}
+
+			if (this.form.type == "postgresql") {
+				org = "library";
+				service = "postgres";
+			}
+
+			if (this.form.type == "prometheus") {
+				org = "prom";
+				service = "prometheus";
+			}
+
+			if (this.form.type == "rabbitmq") {
+				org = "library";
+				service = "rabbitmq";
+			}
+
+			if (this.form.type == "vault") {
+				org = "library";
+				service = "vault";
+			}
+
+			if (this.form.type == "zipkin") {
+				org = "openzipkin";
+				service = "zipkin";
+			}
+
+			this.$store
+				.dispatch("service/getServiceTagsAction", {
+					org: org,
+					service: service,
+					cache: "true",
+				})
+				.then(
+					() => {
+						let data = this.$store.getters["service/getServiceTagsResult"];
+
+						this.form.version = {
+							selected: "",
+							options: [{ text: "Default", value: "" }],
+						};
+
+						for (var i = 0; i < data.tags.length; i++) {
+							this.form.version.options.push({
+								text: data.tags[i],
+								value: data.tags[i],
+							});
+						}
+
+						this.loader.ref.close();
+					},
+					(err) => {
+						if (err.response.data.errorMessage) {
+							this.$buefy.toast.open({
+								message: err.response.data.errorMessage,
+								type: "is-danger is-light",
+							});
+						} else {
+							this.$buefy.toast.open({
+								message: "Error status code: " + err.response.status,
+								type: "is-danger is-light",
+							});
+						}
+						this.loader.ref.close();
+					}
+				);
+		},
+
 		deployEvent() {
 			this.loading();
 			this.form.button_disabled = true;
@@ -283,6 +456,10 @@ export default {
 						this.form.configs.prometheus.configsBase64Decoded
 					),
 				};
+			} else if (this.form.type == "consul") {
+				configs = this.form.configs.consul;
+			} else if (this.form.type == "vault") {
+				configs = this.form.configs.vault;
 			}
 
 			this.$store
@@ -290,6 +467,7 @@ export default {
 					service: this.form.type,
 					deleteAfter: deleteAfter,
 					configs: configs,
+					version: this.form.version.selected,
 				})
 				.then(
 					() => {

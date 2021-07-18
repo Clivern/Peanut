@@ -8,6 +8,7 @@ import {
 	deleteService,
 	getJob,
 	deployService,
+	getServiceTags,
 } from "@/common/service.api";
 
 const state = () => ({
@@ -16,6 +17,7 @@ const state = () => ({
 	getDeleteServiceResult: {},
 	getJobResult: {},
 	getDeployServiceResult: {},
+	getServiceTagsResult: {},
 });
 
 const getters = {
@@ -33,6 +35,9 @@ const getters = {
 	},
 	getDeployServiceResult: (state) => {
 		return state.getDeployServiceResult;
+	},
+	getServiceTagsResult: (state) => {
+		return state.getServiceTagsResult;
 	},
 };
 
@@ -62,6 +67,11 @@ const actions = {
 		context.commit("SET_DEPLOY_SERVICE_RESULT", result.data);
 		return result;
 	},
+	async getServiceTagsAction(context, payload) {
+		const result = await getServiceTags(payload);
+		context.commit("SET_SERVICE_TAGS_RESULT", result.data);
+		return result;
+	},
 };
 
 const mutations = {
@@ -79,6 +89,9 @@ const mutations = {
 	},
 	SET_DEPLOY_SERVICE_RESULT(state, getDeployServiceResult) {
 		state.getDeployServiceResult = getDeployServiceResult;
+	},
+	SET_SERVICE_TAGS_RESULT(state, getServiceTagsResult) {
+		state.getServiceTagsResult = getServiceTagsResult;
 	},
 };
 
