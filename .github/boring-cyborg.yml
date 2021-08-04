@@ -1,0 +1,95 @@
+---
+firstIssueWelcomeComment: "Thanks for opening your first issue here! Be sure to follow the issue template!"
+firstPRMergeComment: "Awesome work, congrats on your first merged pull request!"
+firstPRWelcomeComment: "Thanks for opening this pull request! Please check out our contributing guidelines."
+
+labelPRBasedOnFilePath:
+    "🚧 CI":
+        - .github/workflows/*
+
+    "🚧 CSS":
+        - "**/*.css"
+
+    "🚧 Configuration":
+        - .github/*
+
+    "🚧 Dependencies":
+        - Dockerfile*
+        - composer.*
+        - package.json
+        - package-lock.json
+        - yarn.lock
+        - go.mod
+        - go.sum
+        - build.gradle
+        - Cargo.toml
+        - Cargo.lock
+        - Gemfile.lock
+        - Gemfile
+
+    "🚧 Docker":
+        - Dockerfile*
+
+        - .docker/**/*
+
+    "🚧 Documentation":
+        - README.md
+        - CONTRIBUTING.md
+
+    "🚧 Go":
+        - "**/*.go"
+
+    "🚧 Rust":
+        - "**/*.rs"
+
+    "🚧 Java":
+        - "**/*.java"
+
+    "🚧 Ruby":
+        - "**/*.rb"
+
+    "🚧 HTML":
+        - "**/*.htm"
+        - "**/*.html"
+
+    "🚧 Image":
+        - "**/*.gif"
+        - "**/*.jpg"
+        - "**/*.jpeg"
+        - "**/*.png"
+        - "**/*.webp"
+
+    "🚧 JSON":
+        - "**/*.json"
+
+    "🚧 JavaScript":
+        - "**/*.js"
+        - package.json
+        - package-lock.json
+        - yarn.lock
+
+    "🚧 MarkDown":
+        - "**/*.md"
+
+    "🚧 PHP":
+        - "**/*.php"
+        - composer.*
+
+    "🚧 Source":
+        - src/**/*
+
+    "🚧 TOML":
+        - "**/*.toml"
+
+    "🚧 Templates":
+  
+      - "**/*.twig"
+        - "**/*.tpl"
+
+    "🚧 Tests":
+        - tests/**/*
+
+    "🚧 YAML":
+        - "**/*.yml"
+        - "**/*.yaml"
+
