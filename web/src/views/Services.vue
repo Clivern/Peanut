@@ -314,7 +314,7 @@ export default {
 			}
 
 			if (data.service == "minio") {
-				window.open("//" + data.configs.address + ":" + data.configs.apiPort);
+				window.open("//" + data.configs.address + ":" + data.configs.consolePort);
 			}
 		},
 		deleteService(serviceId) {
