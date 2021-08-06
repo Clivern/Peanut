@@ -63,6 +63,7 @@ LimitNOFILE=40000
 WantedBy=multi-user.target" > /etc/systemd/system/etcd.service
 
     systemctl daemon-reload
+    systemctl enable etcd.service
     systemctl start etcd.service
 
     echo "etcd installation done!"
@@ -95,6 +96,7 @@ RestartSec=2
 WantedBy=multi-user.target" > /etc/systemd/system/peanut.service
 
     systemctl daemon-reload
+    systemctl enable peanut.service
     systemctl start peanut.service
 
     echo "peanut installation done!"
