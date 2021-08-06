@@ -151,6 +151,16 @@
 							-
 						</template>
 
+						<template v-if="props.row.service == 'minio'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
+
 						<template v-if="props.row.service == 'consul'">
 							<b-button
 								size="is-small"
@@ -224,6 +234,8 @@ export default {
 				rabbitmq: "RabbitMQ",
 				consul: "Consul",
 				vault: "Vault",
+				cassandra: "Cassandra",
+				minio: "Minio",
 			},
 		};
 	},
@@ -299,6 +311,10 @@ export default {
 
 			if (data.service == "vault") {
 				window.open("//" + data.configs.address + ":" + data.configs.httpPort);
+			}
+
+			if (data.service == "minio") {
+				window.open("//" + data.configs.address + ":" + data.configs.apiPort);
 			}
 		},
 		deleteService(serviceId) {

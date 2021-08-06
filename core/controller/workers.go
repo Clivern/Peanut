@@ -102,6 +102,8 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.RabbitMQService:      definition.RabbitMQDockerImageVersion,
 		definition.ConsulService:        definition.VaultDockerImageVersion,
 		definition.VaultService:         definition.ConsulDockerImageVersion,
+		definition.CassandraService:     definition.CassandraDockerImageVersion,
+		definition.MinioService:         definition.MinioDockerImageVersion,
 	}
 
 	if _, ok := defaultTags[message.Service]; !ok {

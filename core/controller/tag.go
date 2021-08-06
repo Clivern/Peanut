@@ -45,6 +45,8 @@ func GetTags(c *gin.Context) {
 		definition.RabbitMQService:      []string{"library", "rabbitmq"},
 		definition.ConsulService:        []string{"library", "consul"},
 		definition.VaultService:         []string{"library", "vault"},
+		definition.CassandraService:     []string{"library", "cassandra"},
+		definition.MinioService:         []string{"minio", "minio"},
 	}
 
 	if _, ok := dockerImagesOrgs[serviceType]; !ok {

@@ -522,6 +522,53 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.CassandraService == service {
+		// Deploy Cassandra
+		def = definition.GetCassandraConfig(
+			serviceID,
+			version,
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.CassandraPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+	} else if definition.MinioService == service {
+		// Deploy Minio
+		dynamicConfigs["username"] = util.GetVal(configs, "username", definition.MinioRootUser)
+		dynamicConfigs["password"] = util.GetVal(configs, "password", definition.MinioRootPassword)
+
+		def = definition.GetMinioConfig(
+			serviceID,
+			version,
+			dynamicConfigs["username"],
+			dynamicConfigs["password"],
+		)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["apiPort"], err = d.fetchServicePort(serviceID, definition.MinioAPIPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["consolePort"], err = d.fetchServicePort(serviceID, definition.MinioConsolePort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -642,6 +689,22 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 			serviceID,
 			version,
 			util.GetVal(configs, "token", definition.VaultDefaultToken),
+		)
+
+	} else if definition.CassandraService == service {
+		// Get Cassandra Definition
+		def = definition.GetCassandraConfig(
+			serviceID,
+			version,
+		)
+
+	} else if definition.MinioService == service {
+		// Get Minio Definition
+		def = definition.GetMinioConfig(
+			serviceID,
+			version,
+			util.GetVal(configs, "username", definition.MinioRootUser),
+			util.GetVal(configs, "password", definition.MinioRootPassword),
 		)
 
 	}

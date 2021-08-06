@@ -53,10 +53,7 @@ const getServiceTags = (payload) => {
 	}
 
 	return ApiService.get(
-		"/api/v1/tag/" +
-			payload["serviceType"] +
-			"/" +
-			payload["cache"],
+		"/api/v1/tag/" + payload["serviceType"] + "/" + payload["cache"],
 		apiKey
 	);
 };

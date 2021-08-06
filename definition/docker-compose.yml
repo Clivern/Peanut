@@ -155,3 +155,20 @@ services:
         ports:
             - '8500'
         command: consul agent -dev -client=0.0.0.0
+
+    minio:
+        image: 'minio/minio:latest'
+        command: server /data --console-address :9001
+        environment:
+            - MINIO_ROOT_USER=admin1234567
+            - MINIO_ROOT_PASSWORD=admin1234567
+        ports:
+            - '9000'
+            - '9001'
+        restart: unless-stopped
+
+    cassandra:
+        image: cassandra:4.0
+        ports:
+            - "9042"
+        restart: unless-stopped

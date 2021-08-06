@@ -5,6 +5,8 @@
 package definition
 
 import (
+	"strings"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -36,5 +38,7 @@ func (d *DockerComposeConfig) ToString() (string, error) {
 		return "", err
 	}
 
-	return string(o), nil
+	result := strings.Replace(string(o), `omitempty`, "", -1)
+
+	return result, nil
 }
