@@ -35,6 +35,7 @@
 						<option value="ghost">Ghost</option>
 						<option value="httpbin">Httpbin</option>
 						<option value="etherpad">Etherpad</option>
+						<option value="nagios">Nagios</option>
 					</b-select>
 				</b-field>
 
@@ -248,6 +249,7 @@ export default {
 					ghost: {},
 					httpbin: {},
 					etherpad: {},
+					nagios: {},
 					vault: {
 						token: "peanut",
 					},
@@ -415,6 +417,8 @@ export default {
 				configs = this.form.configs.httpbin;
 			} else if (this.form.type == "etherpad") {
 				configs = this.form.configs.etherpad;
+			} else if (this.form.type == "nagios") {
+				configs = this.form.configs.nagios;
 			}
 
 			this.$store

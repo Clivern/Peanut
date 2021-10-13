@@ -68,6 +68,7 @@ Supported Services:
 - Docker Registry.
 - Ghost.
 - Httpbin.
+- Nagios.
 - Etherpad.
 
 
@@ -502,6 +503,14 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"httpbin"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Nagios.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"nagios"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 

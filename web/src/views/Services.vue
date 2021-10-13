@@ -201,6 +201,16 @@
 							-
 						</template>
 
+						<template v-if="props.row.service == 'nagios'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
+
 						<template v-if="props.row.service == 'httpbin'">
 							<b-button
 								size="is-small"
@@ -270,6 +280,7 @@ export default {
 				ghost: "Ghost",
 				httpbin: "Httpbin",
 				etherpad: "Etherpad",
+				nagios: "Nagios",
 			},
 		};
 	},
@@ -334,6 +345,10 @@ export default {
 			}
 
 			if (data.service == "etherpad") {
+				window.open("//" + data.configs.address + ":" + data.configs.port);
+			}
+
+			if (data.service == "nagios") {
 				window.open("//" + data.configs.address + ":" + data.configs.port);
 			}
 

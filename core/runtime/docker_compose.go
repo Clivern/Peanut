@@ -629,6 +629,24 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.NagiosService == service {
+		dynamicConfigs["username"] = definition.NagiosRootUser
+		dynamicConfigs["password"] = definition.NagiosRootPassword
+
+		// Deploy Nagios
+		def = definition.GetNagiosConfig(serviceID, version)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.NagiosPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -782,6 +800,10 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 	} else if definition.EtherpadService == service {
 		// Get Etherpad Definition
 		def = definition.GetEtherpadConfig(serviceID, version)
+
+	} else if definition.NagiosService == service {
+		// Get Nagios Definition
+		def = definition.GetNagiosConfig(serviceID, version)
 	}
 
 	err := d.destroyService(serviceID, def)
