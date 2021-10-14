@@ -104,6 +104,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.VaultService:         definition.ConsulDockerImageVersion,
 		definition.CassandraService:     definition.CassandraDockerImageVersion,
 		definition.MinioService:         definition.MinioDockerImageVersion,
+		definition.RegistryService:      definition.RegistryDockerImage,
 	}
 
 	if _, ok := defaultTags[message.Service]; !ok {
