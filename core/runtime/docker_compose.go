@@ -569,6 +569,21 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.RegistryService == service {
+		// Deploy Registry
+		def = definition.GetRegistryConfig(serviceID, version)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.RegistryPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -707,6 +722,9 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 			util.GetVal(configs, "password", definition.MinioRootPassword),
 		)
 
+	} else if definition.MailhogService == service {
+		// Get Registry Definition
+		def = definition.GetRegistryConfig(serviceID, version)
 	}
 
 	err := d.destroyService(serviceID, def)

@@ -172,3 +172,9 @@ services:
         ports:
             - "9042"
         restart: unless-stopped
+
+    registry:
+        image: registry:2
+        ports:
+            - "5000"
+        restart: unless-stopped

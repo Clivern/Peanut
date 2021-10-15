@@ -236,6 +236,7 @@ export default {
 				vault: "Vault",
 				cassandra: "Cassandra",
 				minio: "Minio",
+				registry: "Registry",
 			},
 		};
 	},
@@ -314,7 +315,9 @@ export default {
 			}
 
 			if (data.service == "minio") {
-				window.open("//" + data.configs.address + ":" + data.configs.consolePort);
+				window.open(
+					"//" + data.configs.address + ":" + data.configs.consolePort
+				);
 			}
 		},
 		deleteService(serviceId) {
