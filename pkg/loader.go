@@ -49,7 +49,7 @@ func LoadConfigs(path string) error {
 
 	viper.SetConfigType("yaml")
 
-	viper.ReadConfig(bytes.NewBuffer([]byte(data1)))
+	viper.ReadConfig(bytes.NewBufferString(data1))
 
 	viper.SetDefault("app.name", "x-x-x-x")
 

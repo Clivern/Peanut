@@ -66,7 +66,7 @@ func (h *HTTPClient) Post(ctx context.Context, endpoint string, data string, par
 		return nil, err
 	}
 
-	req, _ := http.NewRequest("POST", endpoint, bytes.NewBuffer([]byte(data)))
+	req, _ := http.NewRequest("POST", endpoint, bytes.NewBufferString(data))
 
 	req = req.WithContext(ctx)
 
@@ -96,7 +96,7 @@ func (h *HTTPClient) Put(ctx context.Context, endpoint string, data string, para
 		return nil, err
 	}
 
-	req, _ := http.NewRequest("PUT", endpoint, bytes.NewBuffer([]byte(data)))
+	req, _ := http.NewRequest("PUT", endpoint, bytes.NewBufferString(data))
 
 	req = req.WithContext(ctx)
 
@@ -126,7 +126,7 @@ func (h *HTTPClient) Patch(ctx context.Context, endpoint string, data string, pa
 		return nil, err
 	}
 
-	req, _ := http.NewRequest("PATCH", endpoint, bytes.NewBuffer([]byte(data)))
+	req, _ := http.NewRequest("PATCH", endpoint, bytes.NewBufferString(data))
 
 	req = req.WithContext(ctx)
 
