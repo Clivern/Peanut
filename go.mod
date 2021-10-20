@@ -6,7 +6,7 @@ require (
 	github.com/coreos/etcd v3.3.25+incompatible // indirect
 	github.com/drone/envsubst v1.0.3
 	github.com/dustin/go-humanize v1.0.0 // indirect
-	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
+	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
 	github.com/gin-gonic/gin v1.7.4
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/manifoldco/promptui v0.8.0
