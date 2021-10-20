@@ -66,6 +66,7 @@ Supported Services:
 - Cassandra.
 - Minio.
 - Docker Registry.
+- Ghost.
 
 
 ## Documentation
@@ -483,6 +484,14 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"registry"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Ghost
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"ghost"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 
