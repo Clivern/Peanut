@@ -104,7 +104,7 @@ services:
         restart: unless-stopped
 
     postgres:
-        image: 'postgres:13.3'
+        image: 'postgres:13.4'
         ports:
             - 5432
         environment:
