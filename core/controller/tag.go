@@ -48,6 +48,7 @@ func GetTags(c *gin.Context) {
 		definition.CassandraService:     []string{"library", "cassandra"},
 		definition.MinioService:         []string{"minio", "minio"},
 		definition.RegistryService:      []string{"library", "registry"},
+		definition.GhostService:         []string{"library", "ghost"},
 	}
 
 	if _, ok := dockerImagesOrgs[serviceType]; !ok {

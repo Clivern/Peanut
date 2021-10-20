@@ -584,6 +584,21 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.GhostService == service {
+		// Deploy Ghost
+		def = definition.GetGhostConfig(serviceID, version)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.GhostPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -725,6 +740,10 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 	} else if definition.MailhogService == service {
 		// Get Registry Definition
 		def = definition.GetRegistryConfig(serviceID, version)
+
+	} else if definition.GhostService == service {
+		// Get Ghost Definition
+		def = definition.GetGhostConfig(serviceID, version)
 	}
 
 	err := d.destroyService(serviceID, def)
