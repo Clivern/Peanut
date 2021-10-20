@@ -32,6 +32,7 @@
 						<option value="cassandra">Cassandra</option>
 						<option value="minio">Minio</option>
 						<option value="registry">Registry</option>
+						<option value="ghost">Ghost</option>
 					</b-select>
 				</b-field>
 
@@ -242,6 +243,7 @@ export default {
 					},
 					consul: {},
 					registry: {},
+					ghost: {},
 					vault: {
 						token: "peanut",
 					},
@@ -403,6 +405,8 @@ export default {
 				configs = this.form.configs.minio;
 			} else if (this.form.type == "registry") {
 				configs = this.form.configs.registry;
+			} else if (this.form.type == "ghost") {
+				configs = this.form.configs.ghost;
 			}
 
 			this.$store

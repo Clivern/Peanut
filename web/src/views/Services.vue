@@ -181,6 +181,16 @@
 							-
 						</template>
 
+						<template v-if="props.row.service == 'ghost'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
+
 						<b-button
 							size="is-small"
 							type="is-link is-danger is-light"
@@ -237,6 +247,7 @@ export default {
 				cassandra: "Cassandra",
 				minio: "Minio",
 				registry: "Registry",
+				ghost: "Ghost",
 			},
 		};
 	},
@@ -289,6 +300,10 @@ export default {
 			}
 
 			if (data.service == "zipkin") {
+				window.open("//" + data.configs.address + ":" + data.configs.port);
+			}
+
+			if (data.service == "ghost") {
 				window.open("//" + data.configs.address + ":" + data.configs.port);
 			}
 
