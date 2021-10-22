@@ -67,6 +67,7 @@ Supported Services:
 - Minio.
 - Docker Registry.
 - Ghost.
+- Httpbin.
 
 
 ## Documentation
@@ -487,11 +488,19 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -H 'x-api-key: ~api~key~here~'
 ```
 
-- Ghost
+- Ghost.
 
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"ghost"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Httpbin.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"httpbin"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 

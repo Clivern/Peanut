@@ -599,6 +599,21 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.HttpbinService == service {
+		// Deploy Httpbin
+		def = definition.GetHttpbinConfig(serviceID, version)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.HttpbinPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -744,6 +759,10 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 	} else if definition.GhostService == service {
 		// Get Ghost Definition
 		def = definition.GetGhostConfig(serviceID, version)
+
+	} else if definition.HttpbinService == service {
+		// Get Httpbin Definition
+		def = definition.GetHttpbinConfig(serviceID, version)
 	}
 
 	err := d.destroyService(serviceID, def)
