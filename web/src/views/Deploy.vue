@@ -33,6 +33,7 @@
 						<option value="minio">Minio</option>
 						<option value="registry">Registry</option>
 						<option value="ghost">Ghost</option>
+						<option value="httpbin">Httpbin</option>
 					</b-select>
 				</b-field>
 
@@ -244,6 +245,7 @@ export default {
 					consul: {},
 					registry: {},
 					ghost: {},
+					httpbin: {},
 					vault: {
 						token: "peanut",
 					},
@@ -407,6 +409,8 @@ export default {
 				configs = this.form.configs.registry;
 			} else if (this.form.type == "ghost") {
 				configs = this.form.configs.ghost;
+			} else if (this.form.type == "httpbin") {
+				configs = this.form.configs.httpbin;
 			}
 
 			this.$store

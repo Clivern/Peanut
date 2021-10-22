@@ -106,6 +106,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.MinioService:         definition.MinioDockerImageVersion,
 		definition.RegistryService:      definition.RegistryDockerImage,
 		definition.GhostService:         definition.GhostDockerImage,
+		definition.HttpbinService:       definition.HttpbinDockerImageVersion,
 	}
 
 	if _, ok := defaultTags[message.Service]; !ok {

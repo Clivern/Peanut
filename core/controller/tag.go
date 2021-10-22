@@ -49,6 +49,7 @@ func GetTags(c *gin.Context) {
 		definition.MinioService:         []string{"minio", "minio"},
 		definition.RegistryService:      []string{"library", "registry"},
 		definition.GhostService:         []string{"library", "ghost"},
+		definition.HttpbinService:       []string{"kennethreitz", "httpbin"},
 	}
 
 	if _, ok := dockerImagesOrgs[serviceType]; !ok {
