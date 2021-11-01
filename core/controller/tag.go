@@ -50,6 +50,7 @@ func GetTags(c *gin.Context) {
 		definition.RegistryService:      []string{"library", "registry"},
 		definition.GhostService:         []string{"library", "ghost"},
 		definition.HttpbinService:       []string{"kennethreitz", "httpbin"},
+		definition.EtherpadService:      []string{"etherpad", "etherpad"},
 	}
 
 	if _, ok := dockerImagesOrgs[serviceType]; !ok {

@@ -107,6 +107,7 @@ func (w *Workers) DeployRequest(c *gin.Context, rawBody []byte) {
 		definition.RegistryService:      definition.RegistryDockerImage,
 		definition.GhostService:         definition.GhostDockerImage,
 		definition.HttpbinService:       definition.HttpbinDockerImageVersion,
+		definition.EtherpadService:      definition.EtherpadDockerImageVersion,
 	}
 
 	if _, ok := defaultTags[message.Service]; !ok {
