@@ -191,6 +191,16 @@
 							-
 						</template>
 
+						<template v-if="props.row.service == 'etherpad'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
+
 						<template v-if="props.row.service == 'httpbin'">
 							<b-button
 								size="is-small"
@@ -259,6 +269,7 @@ export default {
 				registry: "Registry",
 				ghost: "Ghost",
 				httpbin: "Httpbin",
+				etherpad: "Etherpad",
 			},
 		};
 	},
@@ -319,6 +330,10 @@ export default {
 			}
 
 			if (data.service == "httpbin") {
+				window.open("//" + data.configs.address + ":" + data.configs.port);
+			}
+
+			if (data.service == "etherpad") {
 				window.open("//" + data.configs.address + ":" + data.configs.port);
 			}
 

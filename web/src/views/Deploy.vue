@@ -34,6 +34,7 @@
 						<option value="registry">Registry</option>
 						<option value="ghost">Ghost</option>
 						<option value="httpbin">Httpbin</option>
+						<option value="etherpad">Etherpad</option>
 					</b-select>
 				</b-field>
 
@@ -246,6 +247,7 @@ export default {
 					registry: {},
 					ghost: {},
 					httpbin: {},
+					etherpad: {},
 					vault: {
 						token: "peanut",
 					},
@@ -411,6 +413,8 @@ export default {
 				configs = this.form.configs.ghost;
 			} else if (this.form.type == "httpbin") {
 				configs = this.form.configs.httpbin;
+			} else if (this.form.type == "etherpad") {
+				configs = this.form.configs.etherpad;
 			}
 
 			this.$store
