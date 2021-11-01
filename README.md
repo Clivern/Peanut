@@ -68,6 +68,7 @@ Supported Services:
 - Docker Registry.
 - Ghost.
 - Httpbin.
+- Etherpad.
 
 
 ## Documentation
@@ -501,6 +502,14 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"httpbin"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Etherpad.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etherpad"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 
