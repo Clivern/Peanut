@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.3.5" width="240" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/logo.png?v=0.3.6" width="240" />
     <h3 align="center">Peanut</h3>
     <p align="center">Deploy Databases and Services Easily for Development and Testing Pipelines.</p>
     <p align="center">
@@ -10,10 +10,10 @@
             <img src="https://github.com/Clivern/Peanut/workflows/Release/badge.svg">
         </a>
         <a href="https://github.com/Clivern/Peanut/releases">
-            <img src="https://img.shields.io/badge/Version-0.3.5-red.svg">
+            <img src="https://img.shields.io/badge/Version-0.3.6-red.svg">
         </a>
         <a href="https://goreportcard.com/report/github.com/Clivern/Peanut">
-            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.3.5">
+            <img src="https://goreportcard.com/badge/github.com/Clivern/Peanut?v=0.3.6">
         </a>
         <a href="https://godoc.org/github.com/clivern/peanut">
             <img src="https://godoc.org/github.com/clivern/peanut?status.svg">
@@ -25,15 +25,15 @@
 </p>
 <br/>
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.3.5" width="80%" />
+    <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/chart.png?v=0.3.6" width="80%" />
 </p>
 <p align="center">
     <h4 align="center">Dashboard Screenshots</h4>
     <p align="center">
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_01.png?v=0.3.5" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_02.png?v=0.3.5" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_03.png?v=0.3.5" width="90%" />
-        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_04.png?v=0.3.5" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_01.png?v=0.3.6" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_02.png?v=0.3.6" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_03.png?v=0.3.6" width="90%" />
+        <img src="https://raw.githubusercontent.com/Clivern/Peanut/main/assets/screenshot_04.png?v=0.3.6" width="90%" />
     </p>
 </p>
 
@@ -68,6 +68,7 @@ Supported Services:
 - Docker Registry.
 - Ghost.
 - Httpbin.
+- Etherpad.
 
 
 ## Documentation
@@ -501,6 +502,14 @@ $ curl -X POST http://127.0.0.1:8000/api/v1/service \
 ```zsh
 $ curl -X POST http://127.0.0.1:8000/api/v1/service \
     -d '{"service":"httpbin"}' \
+    -H 'x-api-key: ~api~key~here~'
+```
+
+- Etherpad.
+
+```zsh
+$ curl -X POST http://127.0.0.1:8000/api/v1/service \
+    -d '{"service":"etherpad"}' \
     -H 'x-api-key: ~api~key~here~'
 ```
 

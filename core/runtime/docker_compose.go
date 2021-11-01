@@ -614,6 +614,21 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.EtherpadService == service {
+		// Deploy Etherpad
+		def = definition.GetEtherpadConfig(serviceID, version)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.EtherpadPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -763,6 +778,10 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 	} else if definition.HttpbinService == service {
 		// Get Httpbin Definition
 		def = definition.GetHttpbinConfig(serviceID, version)
+
+	} else if definition.EtherpadService == service {
+		// Get Etherpad Definition
+		def = definition.GetEtherpadConfig(serviceID, version)
 	}
 
 	err := d.destroyService(serviceID, def)
