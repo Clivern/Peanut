@@ -7,7 +7,7 @@ require (
 	github.com/drone/envsubst v1.0.3
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.5
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/manifoldco/promptui v0.9.0
 	github.com/markbates/pkger v0.17.1
