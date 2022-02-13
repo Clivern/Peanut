@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/drone/envsubst v1.0.3
 	github.com/franela/goblin v0.0.0-20210113153425-413781f5e6c8
-	github.com/gin-gonic/gin v1.7.6
+	github.com/gin-gonic/gin v1.7.7
 	github.com/manifoldco/promptui v0.9.0
 	github.com/markbates/pkger v0.17.1
 	github.com/prometheus/client_golang v1.11.0
