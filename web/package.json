@@ -10,7 +10,7 @@
 	"dependencies": {
 		"axios": "0.26.0",
 		"buefy": "0.9.14",
-		"core-js": "3.21.0",
+		"core-js": "3.21.1",
 		"vue": "2.6.14",
 		"vue-router": "3.5.3",
 		"vuex": "3.6.2"
