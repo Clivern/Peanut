@@ -647,6 +647,21 @@ func (d *DockerCompose) Deploy(serviceID, service, version string, configs map[s
 		if err != nil {
 			return dynamicConfigs, err
 		}
+	} else if definition.KumaService == service {
+		// Deploy Kuma
+		def = definition.GetKumaConfig(serviceID, version)
+
+		err = d.deployService(serviceID, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
+
+		dynamicConfigs["port"], err = d.fetchServicePort(serviceID, definition.KumaPort, def)
+
+		if err != nil {
+			return dynamicConfigs, err
+		}
 	}
 
 	return dynamicConfigs, nil
@@ -804,6 +819,10 @@ func (d *DockerCompose) Destroy(serviceID, service, version string, configs map[
 	} else if definition.NagiosService == service {
 		// Get Nagios Definition
 		def = definition.GetNagiosConfig(serviceID, version)
+
+	} else if definition.KumaService == service {
+		// Get Kuma Definition
+		def = definition.GetKumaConfig(serviceID, version)
 	}
 
 	err := d.destroyService(serviceID, def)
