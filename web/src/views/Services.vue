@@ -210,6 +210,15 @@
 							>
 							-
 						</template>
+						<template v-if="props.row.service == 'kuma'">
+							<b-button
+								size="is-small"
+								type="is-link is-success is-light"
+								@click="openServiceDashboard(props.row)"
+								>Visit</b-button
+							>
+							-
+						</template>
 
 						<template v-if="props.row.service == 'httpbin'">
 							<b-button
@@ -281,6 +290,7 @@ export default {
 				httpbin: "Httpbin",
 				etherpad: "Etherpad",
 				nagios: "Nagios",
+				kuma: "Kuma",
 			},
 		};
 	},
@@ -349,6 +359,10 @@ export default {
 			}
 
 			if (data.service == "nagios") {
+				window.open("//" + data.configs.address + ":" + data.configs.port);
+			}
+
+			if (data.service == "kuma") {
 				window.open("//" + data.configs.address + ":" + data.configs.port);
 			}
 
