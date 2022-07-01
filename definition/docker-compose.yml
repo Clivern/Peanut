@@ -2,7 +2,7 @@ version: '3'
 
 services:
     elasticsearch:
-        image: 'elasticsearch:8.2.3'
+        image: 'elasticsearch:8.3.1'
         environment:
             - discovery.type=single-node
         ports:
