@@ -21,7 +21,7 @@
 		"@vue/cli-plugin-babel": "5.0.6",
 		"@vue/cli-plugin-eslint": "5.0.6",
 		"@vue/cli-service": "5.0.6",
-		"eslint": "7.32.0",
+		"eslint": "8.18.0",
 		"eslint-plugin-vue": "9.1.1",
 		"vue-template-compiler": "2.7.0"
 	},
