@@ -18,9 +18,9 @@
 	"devDependencies": {
 		"@babel/core": "7.18.6",
 		"@babel/eslint-parser": "7.18.2",
-		"@vue/cli-plugin-babel": "5.0.7",
-		"@vue/cli-plugin-eslint": "5.0.7",
-		"@vue/cli-service": "5.0.7",
+		"@vue/cli-plugin-babel": "5.0.8",
+		"@vue/cli-plugin-eslint": "5.0.8",
+		"@vue/cli-service": "5.0.8",
 		"eslint": "8.19.0",
 		"eslint-plugin-vue": "9.2.0",
 		"vue-template-compiler": "2.7.3"
