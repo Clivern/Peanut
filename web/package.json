@@ -11,9 +11,9 @@
 		"axios": "0.27.2",
 		"buefy": "0.9.21",
 		"core-js": "3.23.4",
-		"vue": "2.7.4",
+		"vue": "3.2.37",
 		"vue-router": "3.5.4",
-		"vuex": "3.6.2"
+		"vuex": "4.0.2"
 	},
 	"devDependencies": {
 		"@babel/core": "7.18.6",
