@@ -11,7 +11,7 @@
 		"axios": "0.27.2",
 		"buefy": "0.9.21",
 		"core-js": "3.24.1",
-		"vue": "2.7.8",
+		"vue": "2.7.9",
 		"vue-router": "3.5.4",
 		"vuex": "3.6.2"
 	},
@@ -23,7 +23,7 @@
 		"@vue/cli-service": "5.0.8",
 		"eslint": "8.22.0",
 		"eslint-plugin-vue": "9.3.0",
-		"vue-template-compiler": "2.7.8"
+		"vue-template-compiler": "2.7.9"
 	},
 	"eslintConfig": {
 		"root": true,
