@@ -65,7 +65,7 @@ services:
         restart: unless-stopped
 
     memcached:
-        image: 'memcached:1.6.16'
+        image: 'memcached:1.6.17'
         ports:
             - '11211'
         restart: unless-stopped
