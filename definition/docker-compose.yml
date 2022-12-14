@@ -129,7 +129,7 @@ services:
         restart: unless-stopped
 
     redis:
-        image: 'bitnami/redis:7.0.5'
+        image: 'bitnami/redis:7.0.6'
         ports:
             - 6379
         environment:
