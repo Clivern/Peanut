@@ -151,7 +151,7 @@ services:
             - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
 
     consul:
-        image: 'consul:1.14.2'
+        image: 'consul:1.14.3'
         ports:
             - '8500'
         command: consul agent -dev -client=0.0.0.0
