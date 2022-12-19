@@ -137,7 +137,7 @@ services:
         restart: unless-stopped
 
     zipkin:
-        image: 'openzipkin/zipkin:2.23'
+        image: 'openzipkin/zipkin:2.24'
         ports:
             - '9411'
         restart: unless-stopped
