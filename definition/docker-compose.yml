@@ -143,7 +143,7 @@ services:
         restart: unless-stopped
 
     vault:
-        image: 'vault:1.12.2'
+        image: 'vault:1.12.3'
         ports:
             - '8200'
         command: vault server -dev -dev-root-token-id=peanut
