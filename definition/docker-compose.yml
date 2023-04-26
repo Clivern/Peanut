@@ -19,7 +19,7 @@ services:
         restart: unless-stopped
 
     grafana:
-        image: 'grafana/grafana:9.4.7'
+        image: 'grafana/grafana:9.5.1'
         environment:
             - 'GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}'
             - 'GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}'
