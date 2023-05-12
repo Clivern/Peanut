@@ -53,7 +53,7 @@ services:
             - '8025'
 
     mariadb:
-        image: 'mariadb:10.11.2'
+        image: 'mariadb:10.11.3'
         ports:
             - 3306
         environment:
