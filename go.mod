@@ -7,7 +7,7 @@ require (
 	github.com/franela/goblin v0.0.0-20211003143422-0a4f594942bf
 	github.com/gin-gonic/gin v1.9.1
 	github.com/manifoldco/promptui v0.9.0
-	github.com/prometheus/client_golang v1.15.0
+	github.com/prometheus/client_golang v1.16.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.7.0
@@ -50,7 +50,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
-	github.com/prometheus/procfs v0.9.0 // indirect
+	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
