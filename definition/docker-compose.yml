@@ -82,7 +82,7 @@ services:
         restart: unless-stopped
 
     mongodb:
-        image: 'mongo:5.0.0-rc7'
+        image: 'mongo:7.0.0-rc7'
         environment:
             - MONGO_INITDB_ROOT_USERNAME=root
             - MONGO_INITDB_ROOT_PASSWORD=root
