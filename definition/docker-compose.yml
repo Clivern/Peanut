@@ -11,7 +11,7 @@ services:
         restart: unless-stopped
 
     etcd:
-        image: 'bitnami/etcd:3.5.10'
+        image: 'bitnami/etcd:3.5.11'
         environment:
             - ALLOW_NONE_AUTHENTICATION=yes
         ports:
