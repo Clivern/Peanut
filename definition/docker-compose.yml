@@ -40,7 +40,7 @@ services:
         restart: unless-stopped
 
     jaeger:
-        image: 'jaegertracing/all-in-one:1.52'
+        image: 'jaegertracing/all-in-one:1.53'
         ports:
             - '6831'
             - '16686'
