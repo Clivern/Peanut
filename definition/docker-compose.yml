@@ -122,7 +122,7 @@ services:
         restart: unless-stopped
 
     rabbitmq:
-        image: 'rabbitmq:3.11-management'
+        image: 'rabbitmq:3.13-management'
         ports:
             - '5672'
             - '15672'
