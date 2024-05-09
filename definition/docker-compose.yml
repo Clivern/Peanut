@@ -114,7 +114,7 @@ services:
         restart: unless-stopped
 
     prometheus:
-        image: 'prom/prometheus:v2.51.2'
+        image: 'prom/prometheus:v2.52.0'
         volumes:
             - '/root/prometheus.yml:/etc/prometheus/prometheus.yml'
         ports:
