@@ -13,7 +13,7 @@ jobs:
         go: ['1.18', '1.19', '1.20.4']
     name: Go ${{ matrix.go }} run
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
       - name: Setup go
         uses: actions/setup-go@v5
         with:
