@@ -12,7 +12,7 @@
 		"buefy": "0.9.29",
 		"core-js": "3.40.0",
 		"vue": "2.7.16",
-		"vue-router": "3.6.5",
+		"vue-router": "4.5.0",
 		"vuex": "3.6.2"
 	},
 	"devDependencies": {
