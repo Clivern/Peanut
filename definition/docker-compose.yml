@@ -92,7 +92,7 @@ services:
         restart: unless-stopped
 
     mysql:
-        image: 'mysql:9.2'
+        image: 'mysql:9.7'
         ports:
             - 3306
         environment:
